@@ -1,0 +1,31 @@
+<form action="settingsEdit" method="post">
+<table>
+    <tr>
+	<th>Company Name</th><td><input type="text" name="companyName" value="{{ v.settings.companyName }}"/></td>
+    </tr>
+    <tr>
+	<th>Company Address</th>
+	<td>
+	    <textarea name="companyAddress" rows="4" cols="50">{{ v.settings.companyAddress }}</textarea>
+	</td>
+    </tr>
+    <tr>
+	<th>Phone #1</th><td><input type="text" name="companyPhone1" value="{{ v.settings.companyPhone1 }}"/></td>
+    </tr>
+    <tr>
+	<th>Phone #2</th><td><input type="text" name="companyPhone2" value="{{ v.settings.companyPhone2 }}"/></td>
+    </tr>
+    <tr>
+	<th>Company Email</th><td><input type="email" name="email" value="{{ v.settings.email }}"/></td>
+    </tr>
+    <tr>
+	<th>Bank Name</th><td><input type="text" name="bankName" value="{{ v.settings.bankName }}"/></td>
+    </tr>
+    <tr>
+	<th>Acct. #</th><td><input type="text" name="bankAcctNum" value="{{ v.settings.bankAcctNum }}"/></td>
+    </tr>
+<table>
+<input type="submit" value="Save Changes"/>
+</form>
+
+	

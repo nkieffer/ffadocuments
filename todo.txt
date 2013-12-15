@@ -1,0 +1,10 @@
+bi-monthly partner confirmation
+
+-sent to agent from partner organization
+- list of assignments for the coming 2 months
+
+volunteer name, project, site, startdate enddate
+
+stats page
+queries
+

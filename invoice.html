@@ -1,0 +1,82 @@
+<html>
+  <head>
+<title>{{ v.pageinfo.title }}</title>
+<link rel="stylesheet" type="text/css" href="css/invoice.css"/>
+<style type="text/css">
+</style>
+<script type="text/javascript">
+
+akeys = "{{ v.akeys }}".split(":" );
+//alert(akeys);
+</script><script type="text/javascript" src="/js/jquery-1.8.0.min.js"></script>
+<script type="text/javascript" src="/js/invoice.js"></script>
+
+</head>
+<body>
+
+{% if v.saved %}
+<input type="hidden" id="ikey" value="{{ v.invoice.key }}"/>
+<button id="delete_invoice">Delete this invoice</button>
+<a href="/partnerForm?key={{ v.invoice.partner.key }}">Back</a>
+<a href="/pdf?ikey={{ v.invoice.key }}">Download PDF</a>
+{% else %}
+<button id="accept_invoice">Save this invoice</button>
+<input type="hidden" id="pkey" value="{{ v.partner.key }}"/>
+<a href="/invoiceForm?key={{ v.partner.key }}">Back</a>
+{% endif %}
+<h1>{{ v.pageinfo.title }}</h1>
+<div id="invoice">
+
+  <header>
+    <div id="left">
+      <address>
+	Friends For Asia<br>
+	550 Turney Rd. Unit C<br>
+	Bedford, OH, 44146<br>
+	<span style="font-weight:bold">SDIN#: 26-2751978</span>
+      </address>
+      
+    </div>
+    <div id="right">
+      <span style="font-weight:bold">Date:</span> {{ v.pageinfo.invoice_date }}<br>
+      <span style="font-weight:bold">Invoice #:</span> {{ v.pageinfo.invoice_num }}<br>
+      
+    
+    </div>
+    <br class="clear"/>
+  </header>
+  <div id="inv_table">
+    <table>
+      <thead>
+	<tr>
+	  <th>Volunteer</th><th>Project</th><th>Site</th><th>Start</th><th>End</th><th>Price</th><th>Discount</th><th>Item Price</th>
+	</tr>
+      </thead>
+      <tbody>
+	{% for a in v.assignments %}
+	<tr>
+	  <td>{{ a.volunteer.lname }}, {{ a.volunteer.fname }}</td>
+	  <td>{{a.project.name }}</td>
+	  <td>{{ a.site.name }}</td>
+	  <td>{{ a.start_date_str }}</td>
+	  <td>{{ a.end_date_str }}</td>
+	  <td>{{ a.project.price }}</td>
+	  <td>{{ a.discount }}</td>
+	  <td>{{ a.item_price }}</td>
+	</tr>
+	{% endfor %}
+	<tr>
+	  <td colspan='6'></td><th>Subtotal</th><td>{{ v.subtotal }}</td>
+	</tr>
+	<tr>
+	  <td colspan='6'></td><th>Salestax</th><td>{{ v.salestax }}</td>
+	</tr>
+	<tr>
+	  <td colspan='6'></td><th>Total</th><td>{{ v.total }}</td>
+	</tr>
+      </tbody>
+    </table>
+  </div>
+</div invoice>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<h2>{{ v.partner.name }}</h2>
+<form action="partnerEdit" method="post">
+  <input type="hidden" name="key" value="{{ v.partner.key }}">
+  <table>
+    <tr>
+      <th><label for="name">Name</label></th><td><input type="text" class="first" name="name" id="name" value="{{ v.partner.name }}"></td>
+    </tr>
+    <tr>
+      <th><label for="abbr">Abbr</label></th><td><input type="text" name="abbr" id="abbr" value="{{ v.partner.abbr }}"></td>
+    </tr>
+  </table>
+  <label for="comment">Comments</label><br/>
+  <textarea name="comment" id="comment">{{ v.partner.comment }}</textarea><br/>
+  <input type="submit" value="Save">
+</form>
+<div id="invoiceList">
+  <h3>Invoices</h3>
+  <ol>
+    {% for i in v.invoices %}
+    <li> <a href="/invoiceCreate?ikey={{ i.key }}">View</a> | <a href="/invoiceDelete?ikey={{ i.key }}">Delete</a> Date: {{ i.date.date }} # Projects: {{ i.akeys|length }}</li>
+    {% endfor %}
+  </ol>
+</div>

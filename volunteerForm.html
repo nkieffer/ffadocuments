@@ -1,0 +1,85 @@
+<!--start include-->
+<form id="volunteer" action="volunteerEdit" method="post">
+  <input type="hidden" name="key" value="{{ v.volunteer.key }}">
+  <table>
+    <tr>
+      <th><label for="fname">First</label></th><td><input type="text" name="fname" id="fname" class="first" value="{{ v.volunteer.fname }}"></td>
+    </tr>
+    <tr>
+      <th><label for="lname">Last</label></th><td> <input type="text" name="lname" id="last" value="{{ v.volunteer.lname }}"></td>
+    </tr>
+    <tr>
+      <th><label for="country">country</label></th><td> <input type="text" name="country" id="country" value="{{ v.volunteer.country }}"></td>
+    </tr>
+    <tr>
+      <th><label for="partner">Partner</label></th>
+      <td>
+        <select id="partner" name="partner">
+          {% for partner in v.partners %}
+          <option value="{{ partner.key }}" {% ifequal v.volunteer.partner.key  partner.key %} selected="selected"{% endifequal %}>{{ partner.name }}</option>
+          {% endfor %}
+        </select>
+      </td>
+    <tr>
+      <th><label for="DOB">DOB</label></th>
+      <td>
+	  <input type="text" size="4" pattern="[1-2][0-9][0-9][0-9]" placeholder="yyyy" name="year" value="{{ v.volunteer.DOB.year }}"/>-
+	  <input type="text" size="2" pattern="[0-1]?[0-9]{1}" placeholder="mm" name="month" value="{{ v.volunteer.DOB.month }}"/>-
+	  <input type="text" size="2" pattern="[0-3]?[0-9]{1}" placeholder="dd" name="day" value="{{ v.volunteer.DOB.day }}"/>
+      </td>
+    </tr>
+    <tr>
+      <th><label for="email">email</label></th>
+      <td><input type="text" name="email" id="email" value="{{ v.volunteer.email }}"/></td>
+    </tr>
+  </table>
+  <label for="address">Address</label><br/>
+  <textarea id="address" name="address" rows="5" cols="30">{{ v.volunteer.address }}</textarea><br/>
+  <label for="emergency">Emergency Contact</label><br/>
+  <textarea id="emergency" name="emergency" rows="5" cols="30">{{ v.volunteer.emergency }}</textarea><br/>
+  <label for="comments">Comment</label><br/>
+  <textarea id="comment" name="comment" rows="5" cols="30">{{ v.volunteer.comment }}</textarea><br/>
+  
+  <input type="submit" value="Save">
+</form>
+
+  {% if v.volunteer.key %}
+<div id="assignments">
+  <h2>Assignments</h2>
+  <a href="/assignmentForm?vkey={{ v.volunteer.key }}" accesskey="a">Add</a>
+  <table>
+    <thead>
+      <tr>
+        <th>Project</th>
+        <th>Site</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Duration</th>
+        <th>Unit Price</th>
+        <th>Discount</th>
+	<th>Price</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for assignment in v.assignments %}
+      <tr>
+        <td>{{ assignment.project.name }}</td>
+        <td>{{ assignment.site.name }}</td>
+        <td>{{ assignment.start_date_str }}</td>
+        <td>{{ assignment.end_date_str }}</td>
+        <td>{{ assignment.duration.days }} days</td>
+        <td>{{ assignment.project.price }}</td>
+        <td>{{ assignment.discount }}</td>
+	<td>{{ assignment.item_price }}</td>
+        <td><a href='/assignmentForm?akey={{ assignment.key }}&vkey={{ v.volunteer.key }}'>Edit</a> | <a href='/assignmentDelete?akey={{ assignment.key }}&vkey={{ v.volunteer.key }}'>Delete</a></td>
+      </tr>
+      {% endfor %}
+      <tr>
+	<th colspan="7">Total</th><td>{{v.total_price}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% endif %}
+<!--end include-->

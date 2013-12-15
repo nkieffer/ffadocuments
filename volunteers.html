@@ -1,0 +1,18 @@
+<a href="volunteerForm" accesskey="a">Add</a>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th><th>Partner</th><th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for volunteer in v.volunteers %}
+    <tr>
+      <td>{{ volunteer.lname }}, {{ volunteer.fname }}</td>
+      <td>{{ volunteer.partner.abbr }}</td>
+      <td><a href="volunteerForm?key={{ volunteer.key }}">Edit</a> | <a href='assignmentForm?vkey={{ volunteer.key }}'>Add Assignment</a></td>
+    </tr>
+{% endfor %}
+  </tbody>
+</table>
+

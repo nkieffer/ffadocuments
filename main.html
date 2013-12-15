@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <title>FFA: {{ v.pageinfo.title }}</title>
+    <script type="text/javascript" src="/js/jquery-1.8.0.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-ui-1.8.23.custom.min.js"></script>
+    <script type="text/javascript" src="/js/main.js"></script>
+    <script type="text/javascript" src="/js/assignments.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.23.custom.css"/>   
+    <link rel="stylesheet" type="text/css" href="css/main.css"/>
+    <style type="text/javascript">
+      .highlight {
+      background-color:lightblue;
+      }
+      .lowlight {
+      background-color:white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="content">
+      <div id="header">
+	<h1>FFA: {{ v.pageinfo.title }}</h1>
+      </div> 
+     <div id="sidebar">
+	<ul>
+	  <li><a href="/assignments" accesskey="c">Calendar</a></li>
+	  <li><a href="/partners" accesskey="r">Partners</a></li>
+	  <li><a href="/projects" accesskey="j">Projects</a></li>
+	  <li><a href="/volunteers" accesskey="v">Volunteers</a></li>
+	  <li><a href="/invoiceViewAll" accesskey="i">Invoices</a></li>
+	  <li><a href="/dump">Dump</a></li>
+	  <li><a href="/settings">Settings</a></li>
+	  <li><a href="{{ v.logout_url }}">Logout</a></li>
+	</ul>
+      </div>
+      <div id="main">
+	{% include v.pageinfo.html %}
+      </div>
+      <div id="footer">
+
+      </div>
+    </div>
+  </body>
+</html>

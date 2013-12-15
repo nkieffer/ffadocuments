@@ -1,0 +1,29 @@
+body{
+font-family:sans-serif;
+}
+div#left{
+float:left;
+width:50%;
+clear:left;
+}
+div#right{
+float:right;
+width:50%;
+clear:right;
+}
+div#inv_table{
+clear:both;
+border:solid 1px blue;
+}
+header{
+border:solid 1px blue;
+margin-bottom:1em;
+}
+.clear{
+clear:both;
+}
+#inv_table table {
+border-collapse:collapse;
+border:solid black 1px;
+}
+
