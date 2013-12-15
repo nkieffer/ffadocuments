@@ -5,17 +5,14 @@ import dbmodels
 import os
 import datetime
 from utilities import *
-#from gcalendar import Calendar
+
 import json
 import logging
 import md5
 from google.appengine.ext.webapp import template
 
 import logging
-#import ho.pisa as pisa
-#import html5lib
-#import reportlab
-#import xhtml2pdf
+
 class Show(webapp.RequestHandler):
     def get(self):
 
@@ -78,13 +75,8 @@ class Invoice(webapp.RequestHandler):
         v.pageinfo.html = "invoiceForm.html"
         key = self.request.get('key')
         v.partner = dbmodels.Partner.get(key)
-#        v.assignments = dbmodels.Assignment.all()
-#        v.assignments.filter("invoiced =", False)
-#        v.assignments.filter("partner =", v.partner.key())
-#        v.total = sum([a.item_price for a in v.assignments]) 
         v.pageinfo.title = "Invoice for %s" % v.partner.name
         path = os.path.join(os.path.dirname(__file__), 'main.html')
-#        self.response.out.write(self.request.params)
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
 
@@ -105,17 +97,8 @@ class Invoice(webapp.RequestHandler):
         assignments = dbmodels.Assignment.all()
         assignments.filter("partner = ", dbmodels.Partner.get(partnerkey))
 
-    #     if invoiced != 'checked':
-    #         assignments.filter("invoiced =", False)
-    #     if alldates != 'checked':
-    #         assignments.filter("start_date >=",
-    #                            datetime.datetime(*[int(x) for x in start_date.split("-")]))
-    #         assignments.filter("start_date <",
-    #                            datetime.datetime(*[int(x) for x in end_date.split("-")]))
-    # # #        pass
         assignments.order("start_date")
 
-    # #    json = [str(self.request.params), self.request.get('invoiced'), self.request.get('alldates')]
         ass = []
         for a in assignments:
             a_dict = {}
@@ -131,9 +114,8 @@ class Invoice(webapp.RequestHandler):
             a_dict['res'] = a.start_date < datetime.datetime(*[int(x) for x in end_date.split("-")])
             ass.append(a_dict)
         params['assignments'] = ass
-    #     self.response.headers["Content-Type"] = "application/json"
-    #     self.response.out.write(json.dumps(json))
         self.response.out.write(json.dumps(params))
+
 class Invoicet(webapp.RequestHandler):
     def get(self):
         options = {"start_date": self.request.get('start_date'),
@@ -141,8 +123,7 @@ class Invoicet(webapp.RequestHandler):
                 "partnerkey" : self.request.get('partnerkey'),
                 "invoiced" : self.request.get('invoiced'),
                 "alldates" : self.request.get('alldates')}
-#        self.response.out.write(json.dumps(options))        
-#        return
+
         logging.info(options)
         start_date = self.request.get('start_date')
         end_date = self.request.get('end_date')
@@ -158,7 +139,6 @@ class Invoicet(webapp.RequestHandler):
         assignments.filter("partner =", p.key())
         if alldates != "checked":
             assignments.filter("start_date >=", strtodt(start_date))
-      #      assignments.filter("end_date >=", strtodt(end_date))
             assignments = [a.jsonAssignment for a in assignments if a.end_date <= strtodt(end_date)]
         else:
             assignments = [a.jsonAssignment for a in assignments]
