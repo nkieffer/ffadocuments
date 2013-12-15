@@ -8,7 +8,6 @@ from utilities import *
 
 import json
 import logging
-import md5
 from google.appengine.ext.webapp import template
 
 import logging
