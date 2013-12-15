@@ -157,7 +157,6 @@ class InvoiceCreate(webapp.RequestHandler):
         v.assignments = dbmodels.Assignment.get(akeys)
         akeys = []
         for a in v.assignments:
-#            a.invoiced = True
             akeys.append(str(a.key()))
             a.put()
         v.akeys = ":".join(akeys)
