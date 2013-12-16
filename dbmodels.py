@@ -42,7 +42,7 @@ class Site(db.Model):
 class Assignment(db.Model):
     volunteer = db.ReferenceProperty(reference_class=Volunteer)
     partner = db.ReferenceProperty(reference_class=Partner)
-    project = db.ReferenceProperty(reference_class=Project)
+    project = db.ReferenceProperty(reference_class=Project, collection_name='assignments')
     site = db.ReferenceProperty(reference_class=Site)
     start_date = db.DateTimeProperty()
     end_date = db.DateTimeProperty()
@@ -51,6 +51,9 @@ class Assignment(db.Model):
     discount = db.FloatProperty()
     invoiced = db.BooleanProperty(default=False)
     comment = db.TextProperty()
+    @property
+    def projectName(self):
+        return self.project.name
     @property
     def jsonAssignment(self):
         return { "volunteer" : "%s, %s" % (self.volunteer.lname, self.volunteer.fname),

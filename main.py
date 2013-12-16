@@ -16,10 +16,10 @@
 #
 #import atom
 import sys
-sys.path.insert(0, "reportlab.zip")
+#sys.path.insert(0, "reportlab.zip")
 from google.appengine.ext import webapp
 import dbmodels
-import volunteers, partners, projects, sites, assignments, api, document, pdftest, settings
+import volunteers, partners, projects, sites, assignments, api, pdftest, settings
 import reportlab
 import os, sys
 from google.appengine.ext.webapp import template, util
@@ -100,7 +100,6 @@ app = webapp.WSGIApplication([('/', MainHandler),
                               ('/ajaxComment', assignments.ajaxComment),
                               ('/dump', Dump),
                               ('/api/(.*)', api.Api),
-                              ('/document', document.Document),
                               ('/pdf', pdftest.PDF),
                               ('/settings', settings.Show),
                               ('/settingsEdit', settings.Edit)

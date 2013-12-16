@@ -1,14 +1,8 @@
 from google.appengine.ext import db
 import calendar
-#calendar.setfirstweekday(calendar.MONDAY)
 import datetime
-from operator import itemgetter
 from dbmodels import Assignment, Site
 import logging
-class DummyAssignment(object):
-    def __init__(self, site, project):
-        self.site = site
-        self.project = project
 
 class Month():
     names = [ "January","February","March","April","May","June",
@@ -29,33 +23,30 @@ class Month():
         partner = self.request.get("partner")
         project = self.request.get("project")
         site = self.request.get("site")
+
         oneweek = datetime.timedelta(days=7)
-        sites = Site.all()
-        sites.order('project')
 
         for week in [x[0] for x in  self.calendar.monthdatescalendar(self.year, self.month) if x[0].month == self.month]:
-            a_query = db.GqlQuery("SELECT * FROM Assignment WHERE start_date < :1  ORDER BY start_date, end_date DESC", week + oneweek)
-                        
-            assignments = a_query.run()
-            assignments = [a for a in assignments]
 
+            a_query = db.GqlQuery("SELECT * FROM Assignment WHERE start_date < :1 ORDER BY start_date, end_date DESC", week + oneweek)
+
+            assignments = [a for a in a_query.run()]
             assignments = filter(lambda a: week < a.end_date.date(), assignments)
             if country:
                 assignments = filter(lambda a: a.site.country == country, assignments)
             if partner:
-                map(lambda a: logging.info("%s %s %s " % (type(a.partner.key()), type(partner), a.partner.key() == partner)), assignments)
                 assignments = filter(lambda a: unicode(a.partner.key()) == unicode(partner), assignments)
+
             if project:
                 assignments = filter(lambda a: unicode(a.project.key()) == unicode(project), assignments)
+
             if site:
                 assignments = filter(lambda a: unicode(a.site.key()) == unicode(site), assignments)
-            for s in sites:
-                if s.name not in map(lambda a: a.site.name, assignments) and not any((country, partner, project, site)):
-                    continue
-                    assignments.append(DummyAssignment(s, s.project))
-                    
-            assignments = sorted(assignments, key=lambda a: a.project.name)
+
+
+
             if len(assignments) > 0:
+                assignments = sorted(assignments, key=lambda a: a.project.name)
                 new_week = Week(week)
                 new_week.setAssignments(assignments)
                 self.addWeek(new_week)
@@ -73,12 +64,12 @@ class Week():
         for a in self.__assignments:
             a.weeks_remaining = ((a.end_date.date() - self.week).days + 1)/7
             logging.info(a.weeks_remaining)
-            try:
-                a.first_week = (self.week + oneweek) >= a.start_date_date >= self.week
-                a.last_week = (self.week + oneweek) >= a.end_date_date >= self.week
-            except AttributeError: #this catches the DummyAssignments
-                a.first_week = None
-                a.last_week = None
+ #           try:
+            a.first_week = (self.week + oneweek) >= a.start_date_date >= self.week
+            a.last_week = (self.week + oneweek) >= a.end_date_date >= self.week
+            #except AttributeError: #this catches the DummyAssignments
+            #    a.first_week = None
+            #    a.last_week = None
     @property
     def assignments(self):
         return self.__assignments

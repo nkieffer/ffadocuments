@@ -26,11 +26,42 @@ indexes:
 - kind: Assignment
   properties:
   - name: partner
+  - name: site.country
   - name: start_date
 
 - kind: Assignment
   properties:
   - name: partner
+  - name: start_date
+
+- kind: Assignment
+  properties:
+  - name: partner
+  - name: start_date
+  - name: end_date
+
+- kind: Assignment
+  properties:
+  - name: project.name
+  - name: start_date
+  - name: end_date
+    direction: desc
+
+- kind: Assignment
+  properties:
+  - name: projectName
+  - name: start_date
+  - name: end_date
+    direction: desc
+
+- kind: Assignment
+  properties:
+  - name: site.country
+  - name: start_date
+
+- kind: Assignment
+  properties:
+  - name: site.country
   - name: start_date
   - name: end_date
 
@@ -50,6 +81,24 @@ indexes:
   properties:
   - name: start_date
   - name: end_date
+  - name: project
+    direction: desc
+
+- kind: Assignment
+  properties:
+  - name: start_date
+  - name: end_date
+    direction: desc
+
+- kind: Assignment
+  properties:
+  - name: start_date
+  - name: project
+
+- kind: Assignment
+  properties:
+  - name: start_date
+  - name: project
     direction: desc
 
 - kind: Assignment
