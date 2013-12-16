@@ -9,6 +9,7 @@ import datetime
 import calgen
 import math
 import logging
+import time
 from utilities import *
 from google.appengine.ext.webapp import template
 from dbmodels import Partner, Project, Site, Volunteer
@@ -31,6 +32,7 @@ class Show(webapp.RequestHandler):
         month = now.month
         ct = 0
         v.months = []
+        t1 = time.time()
         while ct < 12:
 
             v.months.append(calgen.Month(year, month, self.request))
@@ -40,8 +42,9 @@ class Show(webapp.RequestHandler):
                 year += 1
             ct += 1
         for m in v.months:
-
             m.populate()
+        t2 = time.time()
+        logging.info("calgen: %f" % (t2 - t1))
         v.partners = Partner.all()
         v.projects = Project.all()
         v.sites = Site.all()
