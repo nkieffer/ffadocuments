@@ -42,7 +42,7 @@ class Site(db.Model):
 class Assignment(db.Model):
     volunteer = db.ReferenceProperty(reference_class=Volunteer)
     partner = db.ReferenceProperty(reference_class=Partner)
-    project = db.ReferenceProperty(reference_class=Project, collection_name='assignments')
+    project = db.ReferenceProperty(reference_class=Project)
     site = db.ReferenceProperty(reference_class=Site)
     start_date = db.DateTimeProperty()
     end_date = db.DateTimeProperty()

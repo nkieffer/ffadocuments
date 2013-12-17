@@ -7,7 +7,7 @@
 <script type="text/javascript">
 
 akeys = "{{ v.akeys }}".split(":" );
-//alert(akeys);
+
 </script><script type="text/javascript" src="/js/jquery-1.8.0.min.js"></script>
 <script type="text/javascript" src="/js/invoice.js"></script>
 
@@ -17,12 +17,13 @@ akeys = "{{ v.akeys }}".split(":" );
 {% if v.saved %}
 <input type="hidden" id="ikey" value="{{ v.invoice.key }}"/>
 <button id="delete_invoice">Delete this invoice</button>
-<a href="/partnerForm?key={{ v.invoice.partner.key }}">Back</a>
-<a href="/pdf?ikey={{ v.invoice.key }}">Download PDF</a>
+<button onclick="window.location='/partnerForm?key={{ v.invoice.partner.key }}';">Back</button>
+<button onclick="window.location='/pdf?ikey={{ v.invoice.key }}';">Download PDF</button>
 {% else %}
 <button id="accept_invoice">Save this invoice</button>
+<button onclick="window.location='/invoiceForm?key={{ v.partner.key }}';">Cancel</button>
 <input type="hidden" id="pkey" value="{{ v.partner.key }}"/>
-<a href="/invoiceForm?key={{ v.partner.key }}">Back</a>
+<button onclick="window.location='/invoiceForm?key={{ v.partner.key }}';">Back</button>
 {% endif %}
 <h1>{{ v.pageinfo.title }}</h1>
 <div id="invoice">
