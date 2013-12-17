@@ -15,9 +15,10 @@
 </form>
 <div id="invoiceList">
   <h3>Invoices</h3>
-  <ol>
+  <a href="/invoiceForm?key={{ v.partner.key }}">New Invoice</a>
+<ol>
     {% for i in v.invoices %}
-    <li> <a href="/invoiceCreate?ikey={{ i.key }}">View</a> | <a href="/invoiceDelete?ikey={{ i.key }}">Delete</a> Date: {{ i.date.date }} # Projects: {{ i.akeys|length }}</li>
+    <li> <a href="/invoiceView?ikey={{ i.key }}">View</a> | <a href="/pdf?ikey={{ i.key }}">PDF</a> | <a href="/invoiceDelete?ikey={{ i.key }}">Delete</a> Date: {{ i.date.date }} Partner: {{ i.partner.abbr }} # Projects: {{ i.akeys|length }}</li>
     {% endfor %}
   </ol>
 </div>

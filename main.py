@@ -19,7 +19,7 @@ import sys
 #sys.path.insert(0, "reportlab.zip")
 from google.appengine.ext import webapp
 import dbmodels
-import volunteers, partners, projects, sites, assignments, api, pdftest, settings
+import volunteers, partners, projects, sites, assignments, api, pdftest, settings, invoices
 import reportlab
 import os, sys
 from google.appengine.ext.webapp import template, util
@@ -78,13 +78,12 @@ app = webapp.WSGIApplication([('/', MainHandler),
                               ('/partnerForm', partners.Form),
                               ('/partnerEdit', partners.Edit),
                               ('/partnerDelete', partners.Delete),
-                              ('/invoiceForm', partners.Invoice),
-                              ('/invoice', partners.Invoice),
-                              ('/invoicet', partners.Invoicet),
-                              ('/invoiceCreate', partners.InvoiceCreate),
-                              ('/invoiceConfirm',partners.InvoiceConfirm),
-                              ('/invoiceDelete', partners.InvoiceDelete),
-                              ('/invoiceViewAll', partners.InvoiceViewAll),
+                              ('/invoices', invoices.Show),
+                              ('/invoiceForm', invoices.Form),
+                              ('/invoiceView', invoices.View),
+                              ('/invoiceJSON', invoices.JSON),
+                              ('/invoiceSave',invoices.Save),
+                              ('/invoiceDelete', invoices.Delete),
                               ('/projects', projects.Show),
                               ('/projectForm', projects.Form),
                               ('/projectEdit', projects.Edit),

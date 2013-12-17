@@ -1,5 +1,5 @@
 <script type="text/javascript" src="/js/invoice.js"></script>
-<form action="invoiceCreate" method="post">
+<form action="invoiceView" method="post">
   <input type="hidden" id="partnerkey" name="partnerkey" value="{{ v.partner.key }}"/>
   <label for="alldates">All Dates:</label><input type="checkbox" class="invoice" name="alldates" id="alldates" checked="checked"/>
   <label for="invoiced">Include Invoiced:</label><input type="checkbox" class="invoice" name="invoiced" id="invoiced"/>  <label for="start_date">Start</label><input type="text" class="datepicker invoice" name="start_date" id="start_date" value="{% now "Y-m" %}-1"/>

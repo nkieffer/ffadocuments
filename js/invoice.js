@@ -9,7 +9,7 @@ $('document').ready(function(){
 	partnerkey = $('#partnerkey').attr('value');
 	console.info("start ajax.."+"\n"+partnerkey+"\n"+alldates+"\n"+invoiced+"\n"+start+"\n"+end );
 	$.ajax({
-	    url :'/invoicet',
+	    url :'/invoiceJSON',
 	    type: 'GET',
 	    data: { "partnerkey" : partnerkey,
 		    "start_date" : start,
@@ -78,35 +78,6 @@ $('document').ready(function(){
 		$(this).css('background-color', 'white');
 	    });
 	}
-    });
-    
-    function confirmInvoice(){
-/*	var akeys = new Array();
-	$('.akey').each(function() {
-	    akeys.push($(this).attr('name'))
-	});
-	alert(akeys.join(":"))
-*/	$.ajax({
-	    url :'/invoiceConfirm',
-	    type: 'GET',
-	    data: { "akeys" : akeys.join(":"),
-		    "pkey" : $('#pkey').attr('value')},
-	    datatype: "json",
-	    success: function(json){
-		$('#accept_invoice').css('background-color', "green");
-		$('#accept_invoice').unbind();
-	    },
-	    error: function(){
-		alert("Something went wrong.");
-	    }
-	});
-    }
-    $('#accept_invoice').click(function(){
-	confirmInvoice();
-    });
-    $('#delete_invoice').click(function(){
-	ikey= $('#ikey').attr('value');
-	window.location="/invoiceDelete?ikey="+ikey;
     });
     ajaxInvoice();
 })

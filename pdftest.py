@@ -1,21 +1,14 @@
-import sys
 import reportlab
 from reportlab.lib.pagesizes import A4, letter
-from reportlab.platypus import BaseDocTemplate, Frame, PageTemplate , SimpleDocTemplate , KeepTogether
 from reportlab.lib.units import mm, inch
 from reportlab.rl_config import defaultPageSize
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors 
 from reportlab.pdfgen import canvas
-
-styles=getSampleStyleSheet()
-import json
 import datetime
-
 from google.appengine.ext import webapp
 from google.appengine.ext import db
-from StringIO import StringIO
 import dbmodels
 
 WIDTH, HEIGHT = defaultPageSize
@@ -25,22 +18,8 @@ MARGIN_RIGHT = WIDTH - MARGIN_LEFT
 NORMAL = "Helvetica"
 BOLD = "Helvetica-Bold"
 OBLIQUE = "Helvetica-Oblique"
+styles=getSampleStyleSheet()
 
-class Numberer(object):
-    def __init__(self, start=0, increment=1, end=None):
-        self.start = start
-        self.increment = increment
-        self.end = end
-        self.current = start
-    def __call__(self, mod=0):
-        next = self.current + self.increment + mod
-        if self.end and (next > self.end):
-            self.current = self.start
-            next = self.start
-        else:
-            self.current = next
-        return next
-        
 def firstPage(canvas, doc):
     canvas.saveState()
     canvas.restoreState()
@@ -48,14 +27,13 @@ def firstPage(canvas, doc):
 def laterPages(canvas, doc):
     canvas.saveState()
     canvas.setFont("Times-Roman", 9)
-    canvas.drawString(inch, 0.75 * inch, "Page %d / %s" % (doc.page, "This is info"))
+    canvas.drawString(inch, 0.75 * inch, "Page %d / %s" % (doc.page, "Friends for Asia"))
     canvas.restoreState()
     
 
 
 class PDF(webapp.RequestHandler):
     def get(self):
-        print "asdfasdfasdf"
         invoice = dbmodels.Invoice.get(self.request.get("ikey"))
         assignments = dbmodels.Assignment.get([str(key) for key in invoice.akeys])
         settings = dbmodels.Settings.get(db.Key.from_path("Settings", "main"))
