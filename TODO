@@ -1,1 +1,6 @@
-Archiving old volunteer/assignment data.
+* TODO move invoice classes from [[file:partners.py][partners.py]] to [[file:invoices.py][invoices.py]]
+* TODO archiving of passed volunteer data
+* TODO time ranges for assignment calendar [[file:assignments.py][assignments.py]]
+
+
+

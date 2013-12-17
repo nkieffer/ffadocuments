@@ -34,22 +34,21 @@ class Show(webapp.RequestHandler):
         v.months = []
         t1 = time.time()
         while ct < 12:
-
-            v.months.append(calgen.Month(year, month, self.request))
+            thisMonth = calgen.Month(year, month, self.request)
+            thisMonth.populate()
+            v.months.append(thisMonth)
             month += 1
             if month ==13:
                 month = 1
                 year += 1
             ct += 1
-        for m in v.months:
-            m.populate()
+
         t2 = time.time()
         logging.info("calgen: %f" % (t2 - t1))
-        v.partners = Partner.all()
-        v.projects = Project.all()
-        v.sites = Site.all()
-        v.countries = [s.country for s in v.sites]
-        v.countries = set(v.countries)
+        v.partners = db.GqlQuery("SELECT  name FROM Partner").fetch(1000)
+        v.projects = db.GqlQuery("SELECT  name FROM Project").fetch(1000)
+        v.countries = db.GqlQuery("SELECT DISTINCT country FROM Site").fetch(1000)
+        v.sites = db.GqlQuery("SELECT name FROM Site").fetch(1000)
         path = os.path.join(os.path.dirname(__file__), 'main.html')
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
@@ -128,7 +127,7 @@ class ajaxAssignment(webapp.RequestHandler):
         end_date = self.request.get('end_date')
         project = dbmodels.Project.get(self.request.get('project'))
         site = dbmodels.Site.get(self.request.get('site'))
-        json = []
+        respData = []
         assignments = dbmodels.Assignment.all()
         assignments.filter("site = ", site)
 #        assignments.filter("start_date >=",
@@ -140,15 +139,15 @@ class ajaxAssignment(webapp.RequestHandler):
 
         if assignments.count(1000) > 0:
             for a in assignments:
-                json.append({ "vname" : "%s, %s" % (a.volunteer.lname, a.volunteer.fname),
+                respData.append({ "vname" : "%s, %s" % (a.volunteer.lname, a.volunteer.fname),
                               "start_date" : a.start_date_str,
                               "end_date" : a.end_date_str,
-                              "duration" : a.duration })
+                              "duration" : str(a.duration) })
         else:
-            json.append("No Assignments")
-        json.append(site.capacity)
+            respData.append("No Assignments")
+        respData.append(site.capacity)
         self.response.headers['Content-Type'] = "application/json"
-        self.response.out.write(json.dumps(json))
+        self.response.out.write(json.dumps(respData))
 
 class ajaxComment(webapp.RequestHandler):
     def get(self):

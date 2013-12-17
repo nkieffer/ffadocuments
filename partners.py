@@ -215,12 +215,18 @@ class InvoiceDelete(webapp.RequestHandler):
 
 class InvoiceViewAll(webapp.RequestHandler):
     def get(self):
+        logging.info("here")
         v = TemplateValues()
         v.pageinfo = TemplateValues()
         v.pageinfo.html = 'invoiceList.html'
         v.pageinfo.title = "Invoices"
         v.invoices = dbmodels.Invoice.all()
         v.invoices.order("date").order("partner")
+        v.invoices = v.invoices.fetch(1000)
+        logging.info(v.invoices)
         path = os.path.join(os.path.dirname(__file__), 'main.html')
-        self.response.headers.add_header("Expires", expdate())
+        logging.info(path)
+        for i in v.invoices:
+            logging.info(i.key())
+       # self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path,{"v":v}))

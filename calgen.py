@@ -64,12 +64,9 @@ class Week():
         for a in self.__assignments:
             a.weeks_remaining = ((a.end_date.date() - self.week).days + 1)/7
             logging.info(a.weeks_remaining)
- #           try:
             a.first_week = (self.week + oneweek) >= a.start_date_date >= self.week
             a.last_week = (self.week + oneweek) >= a.end_date_date >= self.week
-            #except AttributeError: #this catches the DummyAssignments
-            #    a.first_week = None
-            #    a.last_week = None
+
     @property
     def assignments(self):
         return self.__assignments
