@@ -48,6 +48,7 @@ class Edit(webapp.RequestHandler):
         project.name = self.request.get('name')
         project.abbr = self.request.get('abbr')
         project.price = float(self.request.get('price'))
+        project.additionalWeekPrice = float(self.request.get('additionalWeekPrice'))
         project.comment = self.request.get('comment')
         project.put()
         self.redirect('/projects')

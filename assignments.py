@@ -59,7 +59,7 @@ class Form(webapp.RequestHandler):
         v.pageinfo = TemplateValues()
         v.pageinfo.html = "assignmentForm.html"
         v.pageinfo.title = "Assignment Form"
-        v.weeks = range(52)
+        v.weeks = range(2,52)
         origin = self.request.get('origin')
         if origin == "calendar":
             v.project = Project.get(self.request.get('project'))

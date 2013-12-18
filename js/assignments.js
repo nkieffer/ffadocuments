@@ -58,6 +58,7 @@ $('document').ready(function(){
 	$($('#site')[0]).select();
 	ajaxAssignments();
     });
+
     $('#volunteer').change(function(){
 	var key = $(this).attr('value');
 
@@ -75,19 +76,7 @@ $('document').ready(function(){
 	    }
 	});
     });
-/*	    $('tr').each(function(){
-		$(this).css('outline', 'none');
-		$(this).removeClass('highlighted');
-	    });
-	    if(!$(this).hasClass('highlighted')){
-		alert("no highlight");
-		$('tr#'+key).each(function(){
-		    $(this).addClass('highlighted')
-		    $(this).css('outline', 'solid 1px #9999ff');
-		});
-	    }
-	});
-    });*/
+
  // comment from calendar
     $('.assignmentComment').each(function(){
 	$(this).change(function(){
@@ -107,19 +96,22 @@ $('document').ready(function(){
 	    });
 	    	});
     });
-// modify the endDate by selecting # of weeks from dropdown.
-    $('#nweeks').change(function(){
+// modify the endDate by selecting # of weeks from dropdown or by changing the start_date.
+    $('#nweeks, #start_date').change(function(){
 	startDate=$('#start_date').attr('value');
 	if (startDate.length != 0){
 	    startDate=startDate.split("-");
-	    weeks = parseInt($(this).attr('value'));
+	    weeks = parseInt($('#nweeks').attr('value'));
 	    startDate = new Date(startDate);
-	    advance = ((weeks*7) *24*60*60*1000)- (24*60*60*1000);
+	    advance = ((weeks*7) *24*60*60*1000);//- (24*60*60*1000);
 	    endDate = new Date(startDate.getTime() + advance);
-	    $('#end_date').attr('value', endDate.getFullYear()+"-"+(parseInt(endDate.getMonth()) + 1) +"-"+endDate.getDate());
+	    endDateStr = endDate.toISOString().slice(0,10)
+	    $('#end_date').attr('value', endDateStr);//endDate.getFullYear()+"-"+(parseInt(endDate.getMonth()) + 1) +"-"+endDate.getDate());
 	}
     });
+    
     $('.datepicker').datepicker({ dateFormat : "yy-m-d"});
+
 // filter the calendar display
     $('.filter').change(function(){
 	console.log($(this).attr('value'));

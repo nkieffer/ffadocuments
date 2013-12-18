@@ -1,4 +1,5 @@
 <script type="text/javascript" src="/js/invoice.js"></script>
+<link type="text/css" rel="stylesheet" href="css/invoiceForm.css"/>
 <form action="invoiceView" method="post">
   <input type="hidden" id="partnerkey" name="partnerkey" value="{{ v.partner.key }}"/>
   <label for="alldates">All Dates:</label><input type="checkbox" class="invoice" name="alldates" id="alldates" checked="checked"/>
@@ -8,11 +9,23 @@
   <table>
     <thead>
       <tr>
-	<th>Volunteer</th><th>Project</th><th>Site</th><th>Start</th><th>End</th><th>Price</th><th>Discount</th><th>Item Price</th><th>Invoiced</th><th>Include</th>
+	<th>Volunteer</th>
+	<th>Project</th>
+	<th>Site</th>
+	<th>Start</th>
+	<th>End</th>
+	<th>Duration</th>
+	<th>Base<br/>Price</th>
+	<th>Additional<br/>Weeks</th>
+	<th>$/Additional<br/>Week</th>
+	<th>Discount</th>
+	<th>Item<br/>Price</th>
+	<th>Invoiced</th>
+	<th>Include</th>
       </tr>
     </thead>
     <tbody id="items">
-      {% for a in v.assignments %}
+<!--      {% for a in v.assignments %}
       <tr>
 	<td>{{ a.volunteer.lname }}, {{ a.volunteer.fname }}</td>
 	<td>{{a.project.name }}</td>
@@ -29,7 +42,7 @@
       <tr>
 	<td colspan='7'></td><td>{{ v.total }}</td>
       </tr>
-    </tbody>
+-->    </tbody>
   </table>
   <input type="submit" value="Create Invoice"/>
 </form>

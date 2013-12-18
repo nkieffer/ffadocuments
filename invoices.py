@@ -68,6 +68,7 @@ class JSON(webapp.RequestHandler):
         assignments.filter("partner =", p.key())
         if alldates != "checked":
             assignments.filter("start_date >=", strtodt(start_date))
+            map(lambda a: logging.info(str(a.end_date)+" "+str(strtodt(end_date))), assignments)
             assignments = [a.jsonAssignment for a in assignments if a.end_date <= strtodt(end_date)]
         else:
             assignments = [a.jsonAssignment for a in assignments]
@@ -131,6 +132,7 @@ class Save(webapp.RequestHandler):
         keys = []
         for a in assignments:
             a.invoiced = True
+            a.invoiceDate = datetime.datetime.now()
             keys.append(a.key())
             a.put()
         invoice.akeys = keys

@@ -1,12 +1,22 @@
 <!--start include-->
-<form id="volunteer" action="volunteerEdit" method="post">
+<style type="text/css">
+form>div{
+float:left;
+}
+
+td,th{
+padding:0 1em;
+}
+</style>
+<form id="_volunteer" action="volunteerEdit" method="post">
   <input type="hidden" name="key" value="{{ v.volunteer.key }}">
+  <div>
   <table>
     <tr>
       <th><label for="fname">First</label></th><td><input type="text" name="fname" id="fname" class="first" value="{{ v.volunteer.fname }}"></td>
     </tr>
     <tr>
-      <th><label for="lname">Last</label></th><td> <input type="text" name="lname" id="last" value="{{ v.volunteer.lname }}"></td>
+      <th><label for="lname">Last</label></th><td> <input type="text" name="lname" id="lname" value="{{ v.volunteer.lname }}"></td>
     </tr>
     <tr>
       <th><label for="country">country</label></th><td> <input type="text" name="country" id="country" value="{{ v.volunteer.country }}"></td>
@@ -33,18 +43,21 @@
       <td><input type="text" name="email" id="email" value="{{ v.volunteer.email }}"/></td>
     </tr>
   </table>
+  </div>
+  <div>
   <label for="address">Address</label><br/>
   <textarea id="address" name="address" rows="5" cols="30">{{ v.volunteer.address }}</textarea><br/>
   <label for="emergency">Emergency Contact</label><br/>
   <textarea id="emergency" name="emergency" rows="5" cols="30">{{ v.volunteer.emergency }}</textarea><br/>
-  <label for="comments">Comment</label><br/>
+  <label for="comment">Comment</label><br/>
   <textarea id="comment" name="comment" rows="5" cols="30">{{ v.volunteer.comment }}</textarea><br/>
-  
+  </div>
+  <br style="clear:both;"/>
   <input type="submit" value="Save">
 </form>
 
   {% if v.volunteer.key %}
-<div id="assignments">
+<div id="assignments" style="float:none;width:100%;clear:both;">
   <h2>Assignments</h2>
   <a href="/assignmentForm?vkey={{ v.volunteer.key }}" accesskey="a">Add</a>
   <table>
@@ -58,6 +71,7 @@
         <th>Unit Price</th>
         <th>Discount</th>
 	<th>Price</th>
+	<th>Invoice Date</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -72,6 +86,7 @@
         <td>{{ assignment.project.price }}</td>
         <td>{{ assignment.discount }}</td>
 	<td>{{ assignment.item_price }}</td>
+	<td>{{ assignment.invoiceDate.date }}</td>
         <td><a href='/assignmentForm?akey={{ assignment.key }}&vkey={{ v.volunteer.key }}'>Edit</a> | <a href='/assignmentDelete?akey={{ assignment.key }}&vkey={{ v.volunteer.key }}'>Delete</a></td>
       </tr>
       {% endfor %}

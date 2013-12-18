@@ -44,9 +44,12 @@ $('document').ready(function(){
 				     r.site+"</td><td>"+
 				     r.start_date+"</td><td>"+
 				     r.end_date+"</td><td>"+
+				     r.duration +"</td><td>"+
 				     r.price.toFixed(2)+"</td><td>"+
+				     r.additionalWeeks + "</td><td>"+
+				     r.additionalWeekPrice + "</td><td>"+
 				     r.discount.toFixed(2)+"</td><td>"+
-				     (r.price-r.discount).toFixed(2)+"</td><td>"+
+				     ((r.price + (r.additionalWeeks * r.additionalWeekPrice))-r.discount).toFixed(2)+"</td><td>"+
 				     "<input type='checkbox' "+checked+" disabled='disabled'/></td><td>"+
 				     "<input type='checkbox' class='akey' name='akey:"+r.key+"'/></td></tr>");
 		    total += (r.price - r.discount)
@@ -58,22 +61,25 @@ $('document').ready(function(){
     $('input#start_date.invoice, input#end_date.invoice, input#invoiced.invoice, input#alldates.invoice').change(function(){
 	ajaxInvoice();
     });
+
+    $('.datepicker').datepicker({ dateFormat : "yy-m-d"});
     //disable the datepickers because when the page loads, alldates is checked
-    $('#start_date.invoice, #end_date.invoice').each(function(){
+
+    $('#start_date, #end_date').each(function(){
 	$(this).datepicker('disable');
 	$(this).css('background-color', 'lightgrey');
     });
 		   
     //toggle state of datepickers when alldates changes
-    $('#alldates').click(function(){
+    $('#alldates').change(function(){
 	if ($(this).attr("checked") == "checked"){
-	    $('#start_date.invoice, #end_date.invoice').each(function(){
+	    $('#start_date, #end_date').each(function(){
 		$(this).datepicker('disable');
 		$(this).css('background-color', 'lightgrey');
 	    });
 	}
 	else {
-	    $('#start_date.invoice, #end_date.invoice').each(function(){
+	    $('#start_date, #end_date').each(function(){
 		$(this).datepicker('enable');
 		$(this).css('background-color', 'white');
 	    });

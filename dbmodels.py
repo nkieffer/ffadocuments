@@ -24,10 +24,12 @@ class Volunteer(db.Model):
     @property
     def name(self):
         return "%s, %s" % (self.lname, self.fname)
+
 class Project(db.Model):
     name = db.StringProperty()
     abbr = db.StringProperty()
     price = db.FloatProperty()
+    additionalWeekPrice = db.FloatProperty()
     sales_tax = db.FloatProperty(default=.075)
     comment = db.TextProperty()
     
@@ -48,6 +50,7 @@ class Assignment(db.Model):
     end_date = db.DateTimeProperty()
     #do something with this 
     booking_date = db.DateTimeProperty()
+    invoiceDate = db.DateTimeProperty()
     discount = db.FloatProperty()
     invoiced = db.BooleanProperty(default=False)
     comment = db.TextProperty()
@@ -56,12 +59,16 @@ class Assignment(db.Model):
         return self.project.name
     @property
     def jsonAssignment(self):
+        duration = self.duration.days / 7
         return { "volunteer" : "%s, %s" % (self.volunteer.lname, self.volunteer.fname),
                  "project" : self.project.name,
                  "site" : self.site.name,
                  "start_date" : self.start_date_str,
                  "end_date" : self.end_date_str,
+                 "duration" : duration,
+                 "additionalWeeks" : duration - 2,
                  "price" : float(self.project.price),
+                 "additionalWeekPrice" : self.project.additionalWeekPrice,
                  "discount" : float(self.discount),
                  "invoiced" : self.invoiced,
                  "key" : unicode(self.key())}
@@ -76,7 +83,8 @@ class Assignment(db.Model):
         return self.start_date.strftime("%Y-%m-%d")# "%d-%d-%d" % (self.start_date.year, self.start_date.month, self.start_date.day)
     @property
     def end_date_str(self):
-        return (self.end_date - datetime.timedelta(days=6)).strftime("%Y-%m-%d")#"%d-%d-%d" % (self.end_date.year, self.end_date.month, self.end_date.day - 1)
+#        return (self.end_date - datetime.timedelta(days=6)).strftime("%Y-%m-%d")#"%d-%d-%d" % (self.end_date.year, self.end_date.month, self.end_date.day - 1)
+        return (self.end_date).strftime("%Y-%m-%d")#"%d-%d-%d" % (self.end_date.year, self.end_date.month, self.end_date.day - 1)
     @property
     def start_date_date(self):
         return self.start_date.date()

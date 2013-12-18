@@ -1,6 +1,16 @@
-* TODO move invoice classes from [[file:partners.py][partners.py]] to [[file:invoices.py][invoices.py]]
-* TODO archiving of passed volunteer data
-* TODO time ranges for assignment calendar [[file:assignments.py][assignments.py]]
-
-
-
+#+STARTUP: logdone
+#+STARTUP: lognotedone
+* DONE move invoice classes from [[file:partners.py][partners.py]] to [[file:invoices.py][invoices.py]]
+:LOGBOOK:
+   CLOCK: [2013-12-17 Tue 18:36]--[2013-12-17 Tue 21:37] =>  3:01
+:END:
+* TODO 2 week base price, per additional week price
+* TODO [#C] archiving of passed volunteer data
+* TODO [#C] time ranges for assignment calendar [[file:assignments.py][assignments.py]]
+* TODO [#C] memcaching for calendar view
+* TODO [#A] [0/6] delete confirmation dialogs for:
+  - [ ][#A] assignments
+  - [ ][#A] partners
+  - [ ][#A] projects
+  - [ ][#A] sites
+  - [ ][#A] volunteers

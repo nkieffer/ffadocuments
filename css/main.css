@@ -26,6 +26,11 @@ div {
 #sidebar a {
 }
 
+#sidebar aside{
+   background-color:#ffffaa;
+   padding:1em;
+   font-size:8pt;
+}
 #sidebar ul{
     list-style-type:none;
     margin-left:0px;

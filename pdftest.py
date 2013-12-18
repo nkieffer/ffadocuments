@@ -59,12 +59,29 @@ class PDF(webapp.RequestHandler):
         Story.append(Paragraph("<font face='Helvetica-Bold'>Invoice Date:</font> %s <br/><font face='Helvetica-Bold'>Invoice Number:</font> %d" % (timestamp.strftime("%Y-%m-%d"), 1245), style))
 
         tableData = []
-        tableData.append(["Volunteer","Start Date", "End Date", "Price", "Discount", "Item Total"])
+        tableData.append(["Volunteer",
+                          "Start Date", 
+                          "End Date", 
+                          "Base Price", 
+                          "Add Weeks", 
+                          "Per Add Week",
+                          "Add Weeks Fee",
+                          "Discount", 
+                          "Item Total"])
         subTotal = 0
         for a in assignments:
             a = a.jsonAssignment
-            itemSub = a["price"] - a["discount"]
-            assignmentData = [a["volunteer"], a["start_date"], a["end_date"], "$%.2f" % a["price"], "$%.2f" % a["discount"], "$%.2f" % itemSub]
+            addWeeks = a["additionalWeeks"] * a["additionalWeekPrice"]                              
+            itemSub = a["price"] + addWeeks- a["discount"]
+            assignmentData = [a["volunteer"], 
+                              a["start_date"], 
+                              a["end_date"],
+                              "$%.2f" % a["price"], 
+                              a["additionalWeeks"],
+                              "$%.2f" % a["additionalWeekPrice"],
+                              "$%.2f" % addWeeks,
+                              "$%.2f" % a["discount"], 
+                              "$%.2f" % itemSub]
             tableData.append(assignmentData)
             subTotal += itemSub
         salesTax = subTotal * 0.07
@@ -79,10 +96,10 @@ class PDF(webapp.RequestHandler):
              ('LINEBELOW',(0,-4),(-1,-4), 2, colors.black),
              ('FACE', (4,-3),(4,-1), 'Helvetica-Bold'),
              ('FACE', (0,0),(-1,0), 'Helvetica-Bold'),
-             ('SIZE', (1,1),(-1,-1), 8)])
+             ('SIZE', (0,0),(-1,-1), 8)])
             
 
-        table = Table(tableData, colWidths=[2*inch, inch, inch, inch, inch, inch], style=tableStyle)
+        table = Table(tableData, style=tableStyle)
         Story.append(table)
         bankInfo = Paragraph("%s Acct #: %s" % (settings.bankName, settings.bankAcctNum), style)
         Story.append(bankInfo)
