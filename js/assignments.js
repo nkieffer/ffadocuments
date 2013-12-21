@@ -103,14 +103,14 @@ $('document').ready(function(){
 	    startDate=startDate.split("-");
 	    weeks = parseInt($('#nweeks').attr('value'));
 	    startDate = new Date(startDate);
-	    advance = ((weeks*7) *24*60*60*1000);//- (24*60*60*1000);
+	    advance = ((weeks*7) *24*60*60*1000) + (24*60*60*1000);
 	    endDate = new Date(startDate.getTime() + advance);
 	    endDateStr = endDate.toISOString().slice(0,10)
 	    $('#end_date').attr('value', endDateStr);//endDate.getFullYear()+"-"+(parseInt(endDate.getMonth()) + 1) +"-"+endDate.getDate());
 	}
     });
     
-    $('.datepicker').datepicker({ dateFormat : "yy-m-d"});
+    $('.datepicker').datepicker({ dateFormat : "yy-mm-dd"});
 
 // filter the calendar display
     $('.filter').change(function(){

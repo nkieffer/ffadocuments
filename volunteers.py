@@ -7,6 +7,7 @@ import os
 import datetime
 from utilities import *
 from google.appengine.ext.webapp import template
+import logging
 
 class Show(webapp.RequestHandler):
     def get(self):
@@ -40,16 +41,9 @@ class Form(webapp.RequestHandler):
             v.total_price = 0.0
             for a in v.assignments:
                 v.total_price += a.item_price
-        today = datetime.datetime.now()
-        this_year = today.year
-        first_year = this_year - 18
-        v.years = range(first_year - 50, first_year)
-        v.months = range(1,13)
-        v.days = range(1,32)
         v.partners = dbmodels.Partner.all()
         
         path = os.path.join(os.path.dirname(__file__), 'main.html')
-        self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
 
 class Edit(webapp.RequestHandler):

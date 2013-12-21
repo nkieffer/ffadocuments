@@ -1,4 +1,5 @@
 
+
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 from google.appengine.ext import db
@@ -33,7 +34,7 @@ class Show(webapp.RequestHandler):
         ct = 0
         v.months = []
         t1 = time.time()
-        while ct < 12:
+        while ct < 3:
             thisMonth = calgen.Month(year, month, self.request)
             thisMonth.populate()
             v.months.append(thisMonth)

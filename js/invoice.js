@@ -7,7 +7,6 @@ $('document').ready(function(){
 	invoiced = $('#invoiced').attr('checked');
 	alldates = $('#alldates').attr('checked');
 	partnerkey = $('#partnerkey').attr('value');
-	console.info("start ajax.."+"\n"+partnerkey+"\n"+alldates+"\n"+invoiced+"\n"+start+"\n"+end );
 	$.ajax({
 	    url :'/invoiceJSON',
 	    type: 'GET',
@@ -24,13 +23,10 @@ $('document').ready(function(){
 		$('#items').html("Sumfin effed up");
 	    },
 	    success: function(json){
-		console.info("response..asdf");
 		$('#items').html("")
-		console.log(json)
 		total = 0
 		for(j in json){
 		    r = json[j]
-		    console.log(json[j]);
 		    checked="";
 		    invoicedStyle="";
 		    if (r.invoiced == true){
@@ -56,7 +52,6 @@ $('document').ready(function(){
 		}
 		$('#items').html($("#items").html() +"<tr><td colspan='7'></td><td>"+total.toFixed(2)+"</td></tr>");		}
 	});
-	console.info("end ajax")
     }
     $('input#start_date.invoice, input#end_date.invoice, input#invoiced.invoice, input#alldates.invoice').change(function(){
 	ajaxInvoice();

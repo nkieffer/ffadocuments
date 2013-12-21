@@ -59,7 +59,7 @@ class Assignment(db.Model):
         return self.project.name
     @property
     def jsonAssignment(self):
-        duration = self.duration.days / 7
+        duration = self.duration.days / 7.0
         return { "volunteer" : "%s, %s" % (self.volunteer.lname, self.volunteer.fname),
                  "project" : self.project.name,
                  "site" : self.site.name,

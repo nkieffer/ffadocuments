@@ -16,6 +16,7 @@ volunteerData = {{% spaceless %}{% for vol in v.volunteers %}
     {% if v.volunteers %}{% else %}
     <input type="hidden" name="vkey" value="{{ v.vkey }}">
     {% endif %}
+
     <input type="hidden" name="akey" value="{{ v.assignment.key }}"/>
     <input type="hidden" name="partnerkey" value="{{ v.volunteer.partner.key }}"/>
     <input type="hidden" name="pkey" value="{{ v.pkey }}">

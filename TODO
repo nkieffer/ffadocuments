@@ -4,7 +4,12 @@
 :LOGBOOK:
    CLOCK: [2013-12-17 Tue 18:36]--[2013-12-17 Tue 21:37] =>  3:01
 :END:
-* TODO 2 week base price, per additional week price
+* DONE 2 week base price, per additional week price
+  CLOSED: [2013-12-18 Wed 22:49]
+  - CLOSING NOTE [2013-12-18 Wed 22:50] \\
+    PDF generation was also fixed.
+    Still need to modify invoice view to use the form instead.
+* TODO Change invoice view page to use invoice form, make invoices editable
 * TODO [#C] archiving of passed volunteer data
 * TODO [#C] time ranges for assignment calendar [[file:assignments.py][assignments.py]]
 * TODO [#C] memcaching for calendar view
