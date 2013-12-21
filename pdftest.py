@@ -7,7 +7,8 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors 
 from reportlab.pdfgen import canvas
 import datetime
-from google.appengine.ext import webapp
+#from google.appengine.ext import webapp
+import webapp2
 from google.appengine.ext import db
 import dbmodels
 
@@ -32,7 +33,7 @@ def laterPages(canvas, doc):
     
 
 
-class PDF(webapp.RequestHandler):
+class PDF(webapp2.RequestHandler):
     def get(self):
         invoice = dbmodels.Invoice.get(self.request.get("ikey"))
         assignments = dbmodels.Assignment.get([str(key) for key in invoice.akeys])

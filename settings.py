@@ -1,4 +1,5 @@
-from google.appengine.ext import webapp
+#from google.appengine.ext import webapp
+import webapp2
 from google.appengine.ext.webapp import util
 from google.appengine.ext import db
 import dbmodels
@@ -13,7 +14,7 @@ from google.appengine.ext.webapp import template
 
 import logging
 
-class Show(webapp.RequestHandler):
+class Show(webapp2.RequestHandler):
     def get(self):
 
         v = TemplateValues()
@@ -21,15 +22,15 @@ class Show(webapp.RequestHandler):
         v.pageinfo.html = "settings.html"
 
         v.pageinfo.title = "Settings"
-        logging.info("A")
+        v.saved = self.request.get('saved') == '1'
         v.settings = db.get(db.Key.from_path('Settings', 'main'))
-        logging.info("B")
+        
         path = os.path.join(os.path.dirname(__file__), 'main.html')
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
 
 
-class Edit(webapp.RequestHandler):
+class Edit(webapp2.RequestHandler):
     def post(self):
         request = self.request
         
@@ -48,4 +49,4 @@ class Edit(webapp.RequestHandler):
         logging.info(settings.bankAcctNum)
         settings.email = request.get('email')
         settings.put()
-        self.redirect('/settings')
+        self.redirect('/settings?saved=1')

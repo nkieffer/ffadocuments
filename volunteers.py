@@ -1,5 +1,6 @@
 
-from google.appengine.ext import webapp
+#from google.appengine.ext import webapp
+import webapp2
 from google.appengine.ext.webapp import util
 from google.appengine.ext import db
 import dbmodels
@@ -9,7 +10,7 @@ from utilities import *
 from google.appengine.ext.webapp import template
 import logging
 
-class Show(webapp.RequestHandler):
+class Show(webapp2.RequestHandler):
     def get(self):
         v = TemplateValues()
         v.pageinfo = TemplateValues()
@@ -23,9 +24,9 @@ class Show(webapp.RequestHandler):
             v.pageinfo.title = "Volunteers - %s" % partner.name
         path = os.path.join(os.path.dirname(__file__), 'main.html')
         self.response.headers.add_header("Expires", expdate())
-        self.response.out.write(template.render(path, { "v" : v }))
+        self.response.out.write( template.render(path, { "v" : v }))
 
-class Form(webapp.RequestHandler):
+class Form(webapp2.RequestHandler):
     def get(self):
         v = TemplateValues()
         v.pageinfo = TemplateValues()
@@ -46,7 +47,7 @@ class Form(webapp.RequestHandler):
         path = os.path.join(os.path.dirname(__file__), 'main.html')
         self.response.out.write(template.render(path, { "v" : v }))
 
-class Edit(webapp.RequestHandler):
+class Edit(webapp2.RequestHandler):
     def post(self):
         key = self.request.get('key')
         if key == '':

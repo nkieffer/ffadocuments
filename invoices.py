@@ -1,4 +1,5 @@
-from google.appengine.ext import webapp
+#from google.appengine.ext import webapp
+import webapp2
 from google.appengine.ext.webapp import util
 from google.appengine.ext import db
 import dbmodels
@@ -12,7 +13,7 @@ from google.appengine.ext.webapp import template
 
 import logging
 
-class Show(webapp.RequestHandler):
+class Show(webapp2.RequestHandler):
     def get(self):
         logging.info("invoices.Show.get")
         v = TemplateValues()
@@ -30,7 +31,7 @@ class Show(webapp.RequestHandler):
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path,{"v":v}))
 
-class Form(webapp.RequestHandler):
+class Form(webapp2.RequestHandler):
     def get(self):
         """
         This just loads the page. The content is retrieved with an ajax request from in invoice.js
@@ -46,7 +47,7 @@ class Form(webapp.RequestHandler):
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
 
-class JSON(webapp.RequestHandler):
+class JSON(webapp2.RequestHandler):
     def get(self):
         options = {"start_date": self.request.get('start_date'),
                 "end_date" : self.request.get('end_date'),
@@ -75,7 +76,7 @@ class JSON(webapp.RequestHandler):
         assignments.sort(lambda a,b: cmp(a['volunteer'].lower(),b['volunteer'].lower()))
         self.response.out.write(json.dumps(assignments))
 
-class View(webapp.RequestHandler):
+class View(webapp2.RequestHandler):
     def post(self):
         logging.info("invoices.View.post")
         v = TemplateValues()
@@ -121,7 +122,7 @@ class View(webapp.RequestHandler):
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path,{"v":v}))
         
-class Save(webapp.RequestHandler):
+class Save(webapp2.RequestHandler):
     def get(self):
         akeys = self.request.get("akeys").split(":")
         assignments = dbmodels.Assignment.get(akeys)
@@ -140,7 +141,7 @@ class Save(webapp.RequestHandler):
         logging.info(invoice)
         self.response.out.write(json.dumps(True))
 
-class Delete(webapp.RequestHandler):
+class Delete(webapp2.RequestHandler):
     def get(self):
         logging.info("invoices.Delete.get")
         ikey = self.request.get('ikey')

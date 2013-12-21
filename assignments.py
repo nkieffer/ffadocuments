@@ -1,6 +1,7 @@
 
 
-from google.appengine.ext import webapp
+#from google.appengine.ext import webapp
+import webapp2
 from google.appengine.ext.webapp import util
 from google.appengine.ext import db
 import dbmodels
@@ -16,7 +17,7 @@ from google.appengine.ext.webapp import template
 from dbmodels import Partner, Project, Site, Volunteer
 
 
-class Show(webapp.RequestHandler):
+class Show(webapp2.RequestHandler):
     def get(self):
         
         v = TemplateValues()
@@ -54,7 +55,7 @@ class Show(webapp.RequestHandler):
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
 
-class Form(webapp.RequestHandler):
+class Form(webapp2.RequestHandler):
     def get(self):
         v = TemplateValues()
         v.pageinfo = TemplateValues()
@@ -87,7 +88,7 @@ class Form(webapp.RequestHandler):
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
 
-class Edit(webapp.RequestHandler):
+class Edit(webapp2.RequestHandler):
     def post(self):
         akey = self.request.get('akey')
         vkey = self.request.get('vkey')
@@ -112,7 +113,7 @@ class Edit(webapp.RequestHandler):
         logging.info( str(assignment.start_date)+" "+ str(assignment.end_date))
         self.redirect('/volunteerForm?key=' + vkey)
 
-class Delete(webapp.RequestHandler):
+class Delete(webapp2.RequestHandler):
     def get(self):
         akey = self.request.get('akey')
         vkey = self.request.get('vkey')
@@ -122,7 +123,7 @@ class Delete(webapp.RequestHandler):
         self.response.out.write(vkey+"<br>")
         self.redirect('/volunteerForm?key=' + vkey)
         
-class ajaxAssignment(webapp.RequestHandler):
+class ajaxAssignment(webapp2.RequestHandler):
     def get(self):
         start_date = self.request.get('start_date')
         end_date = self.request.get('end_date')
@@ -150,7 +151,7 @@ class ajaxAssignment(webapp.RequestHandler):
         self.response.headers['Content-Type'] = "application/json"
         self.response.out.write(json.dumps(respData))
 
-class ajaxComment(webapp.RequestHandler):
+class ajaxComment(webapp2.RequestHandler):
     def get(self):
         assignmentid = self.request.get('assignmentid')
         comment = self.request.get('comment')

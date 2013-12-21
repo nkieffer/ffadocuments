@@ -1,5 +1,6 @@
 
-from google.appengine.ext import webapp
+#from google.appengine.ext import webapp
+import webapp2
 from google.appengine.ext.webapp import util
 from google.appengine.ext import db
 import dbmodels
@@ -8,7 +9,7 @@ import datetime
 from utilities import *
 from google.appengine.ext.webapp import template
 
-class Show(webapp.RequestHandler):
+class Show(webapp2.RequestHandler):
     def get(self):
         v = TemplateValues()
         v.pageinfo = TemplateValues()
@@ -19,7 +20,7 @@ class Show(webapp.RequestHandler):
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
 
-class Form(webapp.RequestHandler):
+class Form(webapp2.RequestHandler):
     def get(self):
         v = TemplateValues()
         v.pageinfo = TemplateValues()
@@ -38,7 +39,7 @@ class Form(webapp.RequestHandler):
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
 
-class Edit(webapp.RequestHandler):
+class Edit(webapp2.RequestHandler):
     def post(self):
         key = self.request.get('key')
         if key == '':
@@ -53,7 +54,7 @@ class Edit(webapp.RequestHandler):
         project.put()
         self.redirect('/projects')
 
-class Delete(webapp.RequestHandler):
+class Delete(webapp2.RequestHandler):
     def get(self):
         key = self.request.get('key')
         project = dbmodels.Project.get(key)

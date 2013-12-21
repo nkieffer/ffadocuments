@@ -1,17 +1,9 @@
 from google.appengine.ext import webapp
+import webapp2
 import dbmodels
-class Api(webapp.RequestHandler):
-    def get(self, *args):
-        for i in dir(self.request):
-            break
-            print i, ":  ",
-            try:
-                exec("print self.request.%s()" % i)
-            except:
-                exec("print self.request.%s" % i)
 
-        parts = self.request.path.split("/")[2:]
-        print parts
-        print dir(dbmodels)
+class Api(webapp2.RequestHandler):
+    def get(self, arg):
+        self.response.write(arg)
             
 

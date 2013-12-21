@@ -18,8 +18,9 @@
 import sys
 #sys.path.insert(0, "reportlab.zip")
 from google.appengine.ext import webapp
+import webapp2
 import dbmodels
-import volunteers, partners, projects, sites, assignments, api, pdftest, settings, invoices
+#import volunteers, partners, projects, sites, assignments, api, pdftest, settings, invoices
 import reportlab
 import os, sys
 from google.appengine.ext.webapp import template, util
@@ -33,7 +34,7 @@ import datetime
 import logging
 from google.appengine.api import users
 
-class MainHandler(webapp.RequestHandler):
+class MainHandler(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         if user:
@@ -41,7 +42,7 @@ class MainHandler(webapp.RequestHandler):
         else:
             self.redirect(users.create_login_url("/"))
 
-class Dump(webapp.RequestHandler):
+class Dump(webapp2.RequestHandler):
     def get(self):
         tables = [Partner.all(),
                 Volunteer.all(),
@@ -67,42 +68,47 @@ class Dump(webapp.RequestHandler):
         self.response.headers.add_header("Content-disposition", 'attachment; filename=ffabackup.zip')
         self.response.out.write( out.read())
 
+class API(webapp2.RequestHandler):
+    def get(self, id):
+        self.response.out.write(id)
 
+routes= [
+    ('/', MainHandler),
+    webapp2.Route('/calendar', handler="assignments.Show"),
+    webapp2.Route('/volunteers', handler="volunteers.Show", name="volunteers"),
+    webapp2.Route('/volunteerForm', handler="volunteers.Form", name="volunteerForm"),
+    webapp2.Route('/volunteerEdit', handler="volunteers.Edit", name="volunteerEdit"),
+    webapp.Route('/partners', handler="partners.Show"),
+    webapp.Route('/partnerForm', handler="partners.Form"),
+    webapp.Route('/partnerEdit', handler="partners.Edit"),
+    webapp.Route('/partnerDelete', handler="partners.Delete"),
+    webapp.Route('/invoices', handler="invoices.Show"),
+    webapp.Route('/invoiceForm', handler="invoices.Form"),
+    webapp.Route('/invoiceView', handler="invoices.View"),
+    webapp.Route('/invoiceJSON', handler="invoices.JSON"),
+    webapp.Route('/invoiceSave', handler="invoices.Save"),
+    webapp.Route('/invoiceDelete', handler="invoices.Delete"),
+    webapp.Route('/projects', handler="projects.Show"),
+    webapp.Route('/projectForm', handler="projects.Form"),
+    webapp.Route('/projectEdit', handler="projects.Edit"),
+    webapp.Route('/projectDelete', handler="projects.Delete"),
+    webapp.Route('/siteForm', handler="sites.Form"),
+    webapp.Route('/siteEdit', handler="sites.Edit"),
+    webapp.Route('/siteDelete', handler="sites.Delete"),
+    webapp.Route('/assignments', handler="assignments.Show"),
+    webapp.Route('/assignmentForm', handler="assignments.Form"),
+    webapp.Route('/assignmentEdit', handler="assignments.Edit"),
+    webapp.Route('/assignmentDelete', handler="assignments.Delete"),
+    webapp.Route('/ajaxAssignment', handler="assignments.ajaxAssignment"),
+    webapp.Route('/ajaxComment', handler="assignments.ajaxComment"),
+    webapp.Route('/dump', Dump),
+    ('/api/(.+)', API),#"api.Api"),
+    webapp.Route('/pdf', handler="pdftest.PDF"),
+    webapp.Route('/settings', handler="settings.Show"),
+    webapp.Route('/settingsEdit', handler="settings.Edit")
+    ]
                 
-app = webapp.WSGIApplication([('/', MainHandler),
-                              ('/calendar', assignments.Show),
-                              ('/volunteers', volunteers.Show),
-                              ('/volunteerForm', volunteers.Form),
-                              ('/volunteerEdit', volunteers.Edit),
-                              ('/partners', partners.Show),
-                              ('/partnerForm', partners.Form),
-                              ('/partnerEdit', partners.Edit),
-                              ('/partnerDelete', partners.Delete),
-                              ('/invoices', invoices.Show),
-                              ('/invoiceForm', invoices.Form),
-                              ('/invoiceView', invoices.View),
-                              ('/invoiceJSON', invoices.JSON),
-                              ('/invoiceSave',invoices.Save),
-                              ('/invoiceDelete', invoices.Delete),
-                              ('/projects', projects.Show),
-                              ('/projectForm', projects.Form),
-                              ('/projectEdit', projects.Edit),
-                              ('/projectDelete', projects.Delete),
-                              ('/siteForm', sites.Form),
-                              ('/siteEdit', sites.Edit),
-                              ('/siteDelete', sites.Delete),
-                              ('/assignments', assignments.Show),
-                              ('/assignmentForm', assignments.Form),
-                              ('/assignmentEdit', assignments.Edit),
-                              ('/assignmentDelete', assignments.Delete),
-                              ('/ajaxAssignment', assignments.ajaxAssignment),
-                              ('/ajaxComment', assignments.ajaxComment),
-                              ('/dump', Dump),
-                              ('/api/(.*)', api.Api),
-                              ('/pdf', pdftest.PDF),
-                              ('/settings', settings.Show),
-                              ('/settingsEdit', settings.Edit)
-                              ],
+app = webapp2.WSGIApplication( routes,
                                  debug=True)
 #    util.run_wsgi_app(app)
 
