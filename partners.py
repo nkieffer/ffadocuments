@@ -6,7 +6,7 @@ import dbmodels
 import os
 import datetime
 from utilities import *
-
+import views
 import json
 import logging
 from google.appengine.ext.webapp import template
@@ -18,10 +18,11 @@ class Show(webapp2.RequestHandler):
 
         v = TemplateValues()
         v.pageinfo = TemplateValues()
-        v.pageinfo.html = "partners.html"
+        v.pageinfo.html = views.partners
+        logging.info(views.partners)
         v.pageinfo.title = "Partners"
         v.partners = dbmodels.Partner.all()
-        path = os.path.join(os.path.dirname(__file__), 'main.html')
+        path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
 
@@ -29,7 +30,7 @@ class Form(webapp2.RequestHandler):
     def get(self):
         v = TemplateValues()
         v.pageinfo = TemplateValues()
-        v.pageinfo.html = "partnerForm.html"
+        v.pageinfo.html = views.partnerForm
         v.pageinfo.title = "Partner Form"
         key = self.request.get('key')
         if key == '':
@@ -40,7 +41,7 @@ class Form(webapp2.RequestHandler):
             v.invoices.filter("partner =", v.partner.key())
             v.invoices.order("date")
             
-        path = os.path.join(os.path.dirname(__file__), 'main.html')
+        path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
 

@@ -6,7 +6,7 @@ import dbmodels
 import os
 import datetime
 from utilities import *
-
+import views
 import json
 import logging
 from google.appengine.ext.webapp import template
@@ -18,13 +18,13 @@ class Show(webapp2.RequestHandler):
         logging.info("invoices.Show.get")
         v = TemplateValues()
         v.pageinfo = TemplateValues()
-        v.pageinfo.html = 'invoiceList.html'
+        v.pageinfo.html = views.invoices
         v.pageinfo.title = "Invoices"
         v.invoices = dbmodels.Invoice.all()
         v.invoices.order("date").order("partner")
         v.invoices = v.invoices.fetch(1000)
         logging.info(v.invoices)
-        path = os.path.join(os.path.dirname(__file__), 'main.html')
+        path = os.path.join(os.path.dirname(__file__), views.main)
         logging.info(path)
         for i in v.invoices:
             logging.info(i.key())
@@ -39,11 +39,11 @@ class Form(webapp2.RequestHandler):
         logging.info("invoices.Form.get")
         v = TemplateValues()
         v.pageinfo = TemplateValues()
-        v.pageinfo.html = "invoiceForm.html"
+        v.pageinfo.html = views.invoiceForm
         key = self.request.get('key')
         v.partner = dbmodels.Partner.get(key)
         v.pageinfo.title = "Invoice for %s" % v.partner.name
-        path = os.path.join(os.path.dirname(__file__), 'main.html')
+        path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
 
@@ -81,7 +81,7 @@ class View(webapp2.RequestHandler):
         logging.info("invoices.View.post")
         v = TemplateValues()
         v.pageinfo = TemplateValues()
-        v.pageinfo.html = "invoice.html"
+        v.pageinfo.html = views.invoice
         pkey = self.request.get('partnerkey')
         #extract assignment keys from parameters
         
@@ -99,7 +99,7 @@ class View(webapp2.RequestHandler):
         v.subtotal = "%.2f" % v.subtotal
         v.partner = dbmodels.Partner.get(pkey)
         v.pageinfo.title = "Invoice for %s" % v.partner.name
-        path = os.path.join(os.path.dirname(__file__), 'main.html')
+        path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path,{"v":v}))
  

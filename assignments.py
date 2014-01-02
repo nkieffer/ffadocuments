@@ -13,6 +13,7 @@ import math
 import logging
 import time
 from utilities import *
+import views
 from google.appengine.ext.webapp import template
 from dbmodels import Partner, Project, Site, Volunteer
 
@@ -22,7 +23,7 @@ class Show(webapp2.RequestHandler):
         
         v = TemplateValues()
         v.pageinfo = TemplateValues()
-        v.pageinfo.html = "assignments.html"
+        v.pageinfo.html = views.assignments
         v.pageinfo.title = "Calendar"
         v.params = TemplateValues()
         v.params.country = self.request.get("country")
@@ -51,7 +52,7 @@ class Show(webapp2.RequestHandler):
         v.projects = db.GqlQuery("SELECT  name FROM Project").fetch(1000)
         v.countries = db.GqlQuery("SELECT DISTINCT country FROM Site").fetch(1000)
         v.sites = db.GqlQuery("SELECT name FROM Site").fetch(1000)
-        path = os.path.join(os.path.dirname(__file__), 'main.html')
+        path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
 
@@ -59,7 +60,7 @@ class Form(webapp2.RequestHandler):
     def get(self):
         v = TemplateValues()
         v.pageinfo = TemplateValues()
-        v.pageinfo.html = "assignmentForm.html"
+        v.pageinfo.html = views.assignmentForm
         v.pageinfo.title = "Assignment Form"
         v.weeks = range(2,52)
         origin = self.request.get('origin')
@@ -84,7 +85,7 @@ class Form(webapp2.RequestHandler):
             v.volunteer = dbmodels.Volunteer.get(vkey)
             v.sites = dbmodels.Site.all()
             v.projects = dbmodels.Project.all()
-        path = os.path.join(os.path.dirname(__file__), 'main.html')
+        path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
 

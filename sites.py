@@ -7,6 +7,7 @@ import dbmodels
 import os
 import datetime
 from utilities import *
+import views
 from google.appengine.ext.webapp import template
 
 class Show(webapp2.RequestHandler):
@@ -24,7 +25,7 @@ class Form(webapp2.RequestHandler):
     def get(self):
         v = TemplateValues()
         v.pageinfo = TemplateValues()
-        v.pageinfo.html = "siteForm.html"
+        v.pageinfo.html = views.siteForm
         skey = self.request.get('skey')
         pkey = self.request.get('pkey')
         if skey == '':
@@ -37,7 +38,7 @@ class Form(webapp2.RequestHandler):
             v.pkey = pkey
             v.pageinfo.title = "Site: %s %s" % (v.project.name, v.site.name)
 
-        path = os.path.join(os.path.dirname(__file__), 'main.html')
+        path = os.path.join(os.path.dirname(__file__), views.main)
        # self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
 

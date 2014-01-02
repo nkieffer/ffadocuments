@@ -7,6 +7,7 @@ import dbmodels
 import os
 import datetime
 from utilities import *
+import views
 from google.appengine.ext.webapp import template
 import logging
 
@@ -14,7 +15,7 @@ class Show(webapp2.RequestHandler):
     def get(self):
         v = TemplateValues()
         v.pageinfo = TemplateValues()
-        v.pageinfo.html = u"volunteers.html"
+        v.pageinfo.html = views.volunteers
         v.pageinfo.title = "Volunteers"
         v.volunteers = dbmodels.Volunteer.all()
         v.volunteers.order('lname')
@@ -22,7 +23,7 @@ class Show(webapp2.RequestHandler):
             partner = dbmodels.Partner.get(self.request.get('key'))
             v.volunteers.filter("partner =", partner)
             v.pageinfo.title = "Volunteers - %s" % partner.name
-        path = os.path.join(os.path.dirname(__file__), 'main.html')
+        path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write( template.render(path, { "v" : v }))
 
@@ -30,7 +31,7 @@ class Form(webapp2.RequestHandler):
     def get(self):
         v = TemplateValues()
         v.pageinfo = TemplateValues()
-        v.pageinfo.html = "volunteerForm.html"
+        v.pageinfo.html = views.volunteerForm
         v.pageinfo.title = "Volunteer Form"
         key = self.request.get('key')
         if key == '':
@@ -44,7 +45,7 @@ class Form(webapp2.RequestHandler):
                 v.total_price += a.item_price
         v.partners = dbmodels.Partner.all()
         
-        path = os.path.join(os.path.dirname(__file__), 'main.html')
+        path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.out.write(template.render(path, { "v" : v }))
 
 class Edit(webapp2.RequestHandler):

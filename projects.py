@@ -7,16 +7,17 @@ import dbmodels
 import os
 import datetime
 from utilities import *
+import views
 from google.appengine.ext.webapp import template
 
 class Show(webapp2.RequestHandler):
     def get(self):
         v = TemplateValues()
         v.pageinfo = TemplateValues()
-        v.pageinfo.html = "projects.html"
+        v.pageinfo.html = views.projects
         v.pageinfo.title = "Projects"
         v.projects = dbmodels.Project.all()
-        path = os.path.join(os.path.dirname(__file__), 'main.html')
+        path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
 
@@ -24,7 +25,7 @@ class Form(webapp2.RequestHandler):
     def get(self):
         v = TemplateValues()
         v.pageinfo = TemplateValues()
-        v.pageinfo.html = "projectForm.html"
+        v.pageinfo.html = views.projectForm
         v.pageinfo.title = "Project Form"
         key = self.request.get('key')
         if key == '':
@@ -35,7 +36,7 @@ class Form(webapp2.RequestHandler):
             v.sites = query.fetch(50)
             v.sites.sort(key=lambda site: site.country)
             v.sites.sort(key=lambda site: site.name)
-        path = os.path.join(os.path.dirname(__file__), 'main.html')
+        path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
 

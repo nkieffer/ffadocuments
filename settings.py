@@ -1,15 +1,10 @@
-#from google.appengine.ext import webapp
 import webapp2
-from google.appengine.ext.webapp import util
 from google.appengine.ext import db
 import dbmodels
 import os
-import datetime
 from utilities import *
-
-import json
+import views
 import logging
-import md5
 from google.appengine.ext.webapp import template
 
 import logging
@@ -19,13 +14,13 @@ class Show(webapp2.RequestHandler):
 
         v = TemplateValues()
         v.pageinfo = TemplateValues()
-        v.pageinfo.html = "settings.html"
+        v.pageinfo.html = views.settings
 
         v.pageinfo.title = "Settings"
         v.saved = self.request.get('saved') == '1'
         v.settings = db.get(db.Key.from_path('Settings', 'main'))
         
-        path = os.path.join(os.path.dirname(__file__), 'main.html')
+        path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
 
