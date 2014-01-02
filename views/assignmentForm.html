@@ -1,0 +1,100 @@
+<script type="text/javascript" src="/js/assignments.js"></script>
+<script type="text/javascript">
+// siteData used to set options in site selector
+siteData = { {% spaceless %}{% for project in v.projects %}
+"{{ project.key }}" : [ {% for site in v.sites %}{% ifequal site.project.key project.key %}["{{ site.key }}","{{ site.name }}" ],{% endifequal %}
+{% endfor %}],
+{% endfor %}{% endspaceless %}} 
+volunteerData = {{% spaceless %}{% for vol in v.volunteers %}
+"{{ vol.key }}" : "{{ vol.partner.key }}",
+{% endfor %}{% endspaceless %}}
+
+</script>
+
+<div id="assignmentForm">
+  <form action="/assignmentEdit" method="post">
+    {% if v.volunteers %}{% else %}
+    <input type="hidden" name="vkey" value="{{ v.vkey }}">
+    {% endif %}
+
+    <input type="hidden" name="akey" value="{{ v.assignment.key }}"/>
+    <input type="hidden" name="partnerkey" value="{{ v.volunteer.partner.key }}"/>
+    <input type="hidden" name="pkey" value="{{ v.pkey }}">
+    <table>
+      {% if v.volunteers %}
+      <tr>
+	<th>
+	  Participant
+	</th>
+	<td>
+	  <select id="volunteer" name="vkey">
+	    {% for vol in v.volunteers %}
+	    <option value="{{ vol.key }}">{{ vol.fname }} {{vol.lname }}</option>
+	    {% endfor %}
+	  </select>
+	</td>
+      </tr>
+      {% endif %}
+      <tr>
+        <th><label for="project">Project</label></th>
+        <td>
+          <select class="first" name="project" id="project">
+	    <option>-</option>
+            {% for project in v.projects %}
+            <option value="{{ project.key }}" {% ifequal project.key  v.project.key %} selected="selected"{% endifequal %}{% ifequal project.key  v.assignment.project.key %} selected="selected"{% endifequal %}>{{ project.name }}</option>
+            {% endfor %}
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <th><label for="site">Site</label></th>
+        <td>
+          <select name="site" id="site">
+
+	    {% for site in v.calsites %}
+            <option value="{{ site.key }}" {% ifequal site.key  v.site.key %} selected="selected"{% endifequal %} class="{{ site.project.key }}">{{ site.name }}</option>
+	    {% endfor %}
+	                               {% for site in v.sites %}
+					    <option value="{{ site.key }}" {% ifequal site.key  v.assignment.site.key %} selected="selected"{% endifequal %} class="{{ site.project.key }}">{{ site.name }}</option>
+					    {% endfor %}
+					                          </select>
+          Capacity: <span id="capacity">{% for site in v.calsites %}{% ifequal site.key v.site.key %}{{ v.site.capacity }}{% endifequal %}{% endfor %}</span>                     
+        </td>
+      </tr>
+      <tr>
+        <th><label for="start_date">Start</label></th>
+        <td>
+	  <input type="text" class="datepicker" name="start_date" id="start_date" value="{% if v.assignment %}{{ v.assignment.start_date.year }}-{{ v.assignment.start_date.month }}-{{ v.assignment.start_date.day }}{% endif %}{{ v.start_date }}"/>
+	 <label for="nweeks">Weeks: <select id="nweeks">
+	    {% for i in v.weeks %}
+
+	    <option value="{{ i }}">{{ i }}</option>
+	    {% endfor %}
+	  </select></label>
+	</td>
+      </tr>
+      <tr>
+        <th><label for="end_date">End</label></th>
+        <td><input type="text" class="datepicker" name="end_date" id="end_date" value="{{ v.assignment.end_date.year }}-{{ v.assignment.end_date.month }}-{{ v.assignment.end_date.day }}"/></td>
+      </tr>
+      <tr>
+        <th><label for="discount">discount</label></th><td><input type="text" name="discount" id="discount" value="{% if v.assignment %}{{ v.assignment.discount }}{% else %}0{% endif %}"></td>
+      </tr>
+    </table>
+    <label for="comment">Comment</label><br/>
+    <textarea name="comment" id="comment">{{ v.assignment.comment }}</textarea><br/>
+    <input type="submit" value="Save">
+  </form>
+</div>
+<div id="assignmentStatus">
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th><th>Start</th><th>End</th>
+      </tr>
+    </thead>
+    <tbody id="status">
+    </tbody>
+  </table>
+</div>			
+

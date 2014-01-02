@@ -1,0 +1,6 @@
+<h2>Invoices</h2>
+<ol>
+    {% for i in v.invoices %}
+    <li> <a href="/invoiceView?ikey={{ i.key }}">View</a> | <a href="/pdf?ikey={{ i.key }}">PDF</a> | <a href="/invoiceDelete?ikey={{ i.key }}">Delete</a> Date: {{ i.date.date }} Partner: {{ i.partner.abbr }} # Projects: {{ i.akeys|length }}</li>
+    {% endfor %}
+</ol>

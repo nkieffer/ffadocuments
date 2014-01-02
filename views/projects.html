@@ -1,0 +1,19 @@
+<a href="projectForm" accesskey="a">Add</a>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th><th>Abbr</th><th>Price</th><th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for project in v.projects %}
+    <tr>
+      <td>{{ project.name }}</td>
+      <td>{{ project.abbr }}</td>
+      <td> {{ project.price }}</td>
+      <td><a href="/siteForm?pkey={{ project.key }}">Add Site</a> | <a href="/projectForm?key={{ project.key }}">Edit</a> | <a href="/projectDelete?key={{ project.key }}">Delete</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
