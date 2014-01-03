@@ -54,10 +54,10 @@ class PDF(webapp2.RequestHandler):
 <br/>
 %s
 <br/>
-<font face='Helvetica-Bold'>SDIN#: 26-2762978</font>""" % (settings.companyName, settings.companyAddress.replace("\n","<br/>"), settings.email), style)
+<font face='Helvetica-Bold'>SDIN#: %s</font>""" % (settings.companyName, settings.companyAddress.replace("\n","<br/>"), settings.email, settings.sdin), style)
         Story.append(address)
 
-        Story.append(Paragraph("<font face='Helvetica-Bold'>Invoice Date:</font> %s <br/><font face='Helvetica-Bold'>Invoice Number:</font> %d" % (timestamp.strftime("%Y-%m-%d"), 1245), style))
+        Story.append(Paragraph("<font face='Helvetica-Bold'>Invoice Date:</font> %s <br/><font face='Helvetica-Bold'>Invoice Number:</font> %s" % (timestamp.strftime("%Y-%m-%d"), invoice.key().id()), style))
 
         tableData = []
         tableData.append(["Volunteer",
@@ -78,7 +78,7 @@ class PDF(webapp2.RequestHandler):
                               a["start_date"], 
                               a["end_date"],
                               "$%.2f" % a["price"], 
-                              a["additionalWeeks"],
+                              "%d" % a["additionalWeeks"],
                               "$%.2f" % a["additionalWeekPrice"],
                               "$%.2f" % addWeeks,
                               "$%.2f" % a["discount"], 
@@ -102,8 +102,11 @@ class PDF(webapp2.RequestHandler):
 
         table = Table(tableData, style=tableStyle)
         Story.append(table)
+        comment = Paragraph("<b>Comments:</b><br/>%s"%invoice.comment, style)
+        Story.append(comment)
         bankInfo = Paragraph("%s Acct #: %s" % (settings.bankName, settings.bankAcctNum), style)
         Story.append(bankInfo)
+        
         doc.build(Story, onFirstPage=firstPage, onLaterPages=laterPages)
  
         

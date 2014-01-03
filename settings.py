@@ -43,5 +43,6 @@ class Edit(webapp2.RequestHandler):
         settings.bankAcctNum = request.get('bankAcctNum')
         logging.info(settings.bankAcctNum)
         settings.email = request.get('email')
+        settings.sdin = request.get('sdin')
         settings.put()
         self.redirect('/settings?saved=1')

@@ -116,4 +116,4 @@ class Settings(db.Model):
     bankName = db.StringProperty()
     bankAcctNum = db.StringProperty()
     email = db.EmailProperty()
-
+    sdin = db.StringProperty()

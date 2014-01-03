@@ -1,6 +1,17 @@
 <h2>Invoices</h2>
-<ol>
+{% if v.saved %}
+<aside>Changes Saved</aside>
+{% endif %}
+
+<ul>
     {% for i in v.invoices %}
-    <li> <a href="/invoiceView?ikey={{ i.key }}">View</a> | <a href="/pdf?ikey={{ i.key }}">PDF</a> | <a href="/invoiceDelete?ikey={{ i.key }}">Delete</a> Date: {{ i.date.date }} Partner: {{ i.partner.abbr }} # Projects: {{ i.akeys|length }}</li>
+    {% ifchanged i.partner.abbr %}
+    </ul>
+<h3>{{ i.partner.name }}</h3>
+<ul>
+    {% endifchanged %}
+
+    <li>{{ i.date.date }} <a href="/invoiceForm?ikey={{ i.key }}">View</a> | <a href="/pdf?ikey={{ i.key }}">PDF</a> | <a href="/invoiceDelete?ikey={{ i.key }}">Delete</a></li>
+
     {% endfor %}
-</ol>
+</ul>

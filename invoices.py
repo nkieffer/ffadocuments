@@ -21,9 +21,9 @@ class Show(webapp2.RequestHandler):
         v.pageinfo.html = views.invoices
         v.pageinfo.title = "Invoices"
         v.invoices = dbmodels.Invoice.all()
-        v.invoices.order("date").order("partner")
+        v.invoices.order("partner").order("date")
         v.invoices = v.invoices.fetch(1000)
-        logging.info(v.invoices)
+        v.saved = self.request.get('saved') == 'true'
         path = os.path.join(os.path.dirname(__file__), views.main)
         logging.info(path)
         for i in v.invoices:
@@ -40,9 +40,17 @@ class Form(webapp2.RequestHandler):
         v = TemplateValues()
         v.pageinfo = TemplateValues()
         v.pageinfo.html = views.invoiceForm
-        key = self.request.get('key')
-        v.partner = dbmodels.Partner.get(key)
-        v.pageinfo.title = "Invoice for %s" % v.partner.name
+        ikey = self.request.get('ikey')
+        if ikey:
+            v.invoice = dbmodels.Invoice.get(ikey)
+            v.partner = v.invoice.partner
+            v.pageinfo.title = "Invoice for %s %s" % (v.invoice.partner.name, v.invoice.date.date())
+            logging.info( ikey)
+        else:
+            logging.info("no ikey")
+            key = self.request.get('key')
+            v.partner = dbmodels.Partner.get(key)
+            v.pageinfo.title = "Invoice for %s" % v.partner.name
         path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
@@ -60,75 +68,41 @@ class JSON(webapp2.RequestHandler):
         partnerkey = self.request.get('partnerkey')
         invoiced = self.request.get('invoiced')
         alldates = self.request.get('alldates')
-
         p = dbmodels.Partner.get(partnerkey)
+        invoicekey = self.request.get('invoicekey')
+        on_invoice = []
+        if invoicekey:
+            i = dbmodels.Invoice.get(invoicekey)
+            on_invoice =  [str(k) for k in i.akeys]
         assignments = dbmodels.Assignment.all()
+        
         if invoiced != "checked":
             assignments.filter("invoiced =", False)
         assignments.order("start_date").order("end_date")#.order("volunteer.lname")
         assignments.filter("partner =", p.key())
         if alldates != "checked":
             assignments.filter("start_date >=", strtodt(start_date))
-            map(lambda a: logging.info(str(a.end_date)+" "+str(strtodt(end_date))), assignments)
             assignments = [a.jsonAssignment for a in assignments if a.end_date <= strtodt(end_date)]
         else:
             assignments = [a.jsonAssignment for a in assignments]
         assignments.sort(lambda a,b: cmp(a['volunteer'].lower(),b['volunteer'].lower()))
-        self.response.out.write(json.dumps(assignments))
-
-class View(webapp2.RequestHandler):
-    def post(self):
-        logging.info("invoices.View.post")
-        v = TemplateValues()
-        v.pageinfo = TemplateValues()
-        v.pageinfo.html = views.invoice
-        pkey = self.request.get('partnerkey')
-        #extract assignment keys from parameters
-        
-        akeys = map(lambda x: x[5:],filter( lambda x: x[0:5] == "akey:",self.request.params))
-        v.assignments = dbmodels.Assignment.get(akeys)
-        akeys = []
-        for a in v.assignments:
-            akeys.append(str(a.key()))
-            a.put()
-        v.akeys = ":".join(akeys)
-        v.subtotal = sum([a.item_price for a in v.assignments])
-        v.salestax = v.subtotal * .075
-        v.total = "%.2f" % (v.subtotal + v.salestax)
-        v.salestax = "%.2f" % v.salestax
-        v.subtotal = "%.2f" % v.subtotal
-        v.partner = dbmodels.Partner.get(pkey)
-        v.pageinfo.title = "Invoice for %s" % v.partner.name
-        path = os.path.join(os.path.dirname(__file__), views.main)
-        self.response.headers.add_header("Expires", expdate())
-        self.response.out.write(template.render(path,{"v":v}))
- 
-    def get(self):
-        v = TemplateValues()
-        v.pageinfo = TemplateValues()
-        v.pageinfo.html = "invoice.html"
-        v.ikey = self.request.get('ikey')
-        v.invoice = dbmodels.Invoice.get(v.ikey)
-        v.pageinfo.title = "Invoice for %s" % v.invoice.partner.name
-        v.assignments = dbmodels.Assignment.get(v.invoice.akeys)
-        v.subtotal = sum([a.item_price for a in v.assignments])
-        v.salestax = v.subtotal * .075
-        v.total = "%.2f" % (v.subtotal + v.salestax)
-        v.salestax = "%.2f" % v.salestax
-        v.subtotal = "%.2f" % v.subtotal
-        v.saved = True
-        v.pageinfo.html = "invoice.html"
-        path = os.path.join(os.path.dirname(__file__), 'main.html')
-        self.response.headers.add_header("Expires", expdate())
-        self.response.out.write(template.render(path,{"v":v}))
+        logging.info(len(assignments))
+        jsonResponse = {"assignments":assignments, "on_invoice": on_invoice }
+        self.response.out.write(json.dumps(jsonResponse))
         
 class Save(webapp2.RequestHandler):
-    def get(self):
-        akeys = self.request.get("akeys").split(":")
+    def post(self):
+        akeys = map(lambda x: x[5:],filter( lambda x: x[0:5] == "akey:",self.request.params))#self.request.get("akeys").split(":")
         assignments = dbmodels.Assignment.get(akeys)
-        invoice = dbmodels.Invoice()
+        invoicekey = self.request.get('invoicekey')
+        if invoicekey:
+            invoice = dbmodels.Invoice.get(invoicekey)
+            logging.info("editting invoice")
+        else:
+            invoice = dbmodels.Invoice()
+            logging.info("creating new invoice")
 
-        invoice.partner = dbmodels.Partner.get(self.request.get('pkey'))
+        invoice.partner = dbmodels.Partner.get(self.request.get('partnerkey'))
         invoice.date = datetime.datetime.now()
         keys = []
         for a in assignments:
@@ -137,9 +111,12 @@ class Save(webapp2.RequestHandler):
             keys.append(a.key())
             a.put()
         invoice.akeys = keys
+        invoice.comment = self.request.get("comment")
         invoice.put()
+        
         logging.info(invoice)
-        self.response.out.write(json.dumps(True))
+        self.redirect("/invoices?saved=true")
+
 
 class Delete(webapp2.RequestHandler):
     def get(self):

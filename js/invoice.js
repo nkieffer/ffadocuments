@@ -7,10 +7,14 @@ $('document').ready(function(){
 	invoiced = $('#invoiced').attr('checked');
 	alldates = $('#alldates').attr('checked');
 	partnerkey = $('#partnerkey').attr('value');
+	invoicekey = $('#invoicekey').attr('value');
+	alert(invoicekey);
 	$.ajax({
 	    url :'/invoiceJSON',
 	    type: 'GET',
-	    data: { "partnerkey" : partnerkey,
+	    data: {
+		"invoicekey" : invoicekey,
+		"partnerkey" : partnerkey,
 		    "start_date" : start,
 		    "end_date" : end,
 		    'invoiced' : invoiced,
@@ -23,15 +27,22 @@ $('document').ready(function(){
 		$('#items').html("Sumfin effed up");
 	    },
 	    success: function(json){
+		alert("on_invoice\n\n"+json.on_invoice);
+		alert("all\n\n"+json.assignments);
 		$('#items').html("")
 		total = 0
-		for(j in json){
-		    r = json[j]
+		for(j in json.assignments){
+		    r = json.assignments[j]
 		    checked="";
 		    invoicedStyle="";
 		    if (r.invoiced == true){
 			invoicedStyle = "style='background-color:red;'";
 			checked="checked";
+		    }
+		    on_invoice = ""
+		    alert(r.key + "\n\n" + json.on_invoice.indexOf(r.key));
+		    if (json.on_invoice.indexOf(r.key) >= 0){
+			on_invoice="checked"
 		    }
 		    $('#items').html($("#items").html() + 
 				     "<tr><td>"+
@@ -47,7 +58,7 @@ $('document').ready(function(){
 				     r.discount.toFixed(2)+"</td><td>"+
 				     ((r.price + (r.additionalWeeks * r.additionalWeekPrice))-r.discount).toFixed(2)+"</td><td>"+
 				     "<input type='checkbox' "+checked+" disabled='disabled'/></td><td>"+
-				     "<input type='checkbox' class='akey' name='akey:"+r.key+"'/></td></tr>");
+				     "<input type='checkbox' class='akey' name='akey:"+r.key+"' "+ on_invoice +"/></td></tr>");
 		    total += (r.price - r.discount)
 		}
 		$('#items').html($("#items").html() +"<tr><td colspan='7'></td><td>"+total.toFixed(2)+"</td></tr>");		}
@@ -79,6 +90,12 @@ $('document').ready(function(){
 		$(this).css('background-color', 'white');
 	    });
 	}
+    });
+    $('#include_all').change(function(){
+	checked = $(this).attr("checked") == "checked"
+	$('.akey').each(function(){
+	    $(this).attr("checked", checked)
+	});
     });
     ajaxInvoice();
 })
