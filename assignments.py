@@ -108,6 +108,7 @@ class Edit(webapp2.RequestHandler):
         assignment.site = dbmodels.Site.get(self.request.get('site'))
         assignment.start_date = datetime.datetime(*sd)
         assignment.end_date = datetime.datetime(*ed)
+        assignment.num_weeks = int(self.request.get('weeks'))
         assignment.comment = self.request.get('comment')
         assignment.discount = float(self.request.get('discount'))
         assignment.put()

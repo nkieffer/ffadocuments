@@ -42,7 +42,7 @@ class Form(webapp2.RequestHandler):
             v.assignments.filter("volunteer =", v.volunteer.key()).order("start_date")
             v.total_price = 0.0
             for a in v.assignments:
-                v.total_price += a.item_price
+                v.total_price += a.total_price
         v.partners = dbmodels.Partner.all()
         
         path = os.path.join(os.path.dirname(__file__), views.main)

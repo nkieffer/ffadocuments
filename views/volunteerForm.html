@@ -64,14 +64,16 @@ padding:0 1em;
   <table>
     <thead>
       <tr>
-        <th>Project</th>
-        <th>Site</th>
+        <th>Project-Site</th>
         <th>Start</th>
         <th>End</th>
-        <th>Duration</th>
-        <th>Unit Price</th>
-        <th>Discount</th>
-	<th>Price</th>
+        <th>Days</th>
+        <th>Base</th>
+        <th>$/week</th>
+	<th># weeks</th>
+	<th>Weeks Total $</th>
+	<th>Discount</th>
+	<th>Total</th>
 	<th>Invoice Date</th>
         <th>Actions</th>
       </tr>
@@ -79,14 +81,16 @@ padding:0 1em;
     <tbody>
       {% for assignment in v.assignments %}
       <tr>
-        <td>{{ assignment.project.name }}</td>
-        <td>{{ assignment.site.name }}</td>
+        <td>{{ assignment.project.name }}-{{ assignment.site.name }}</td>
         <td>{{ assignment.start_date_str }}</td>
         <td>{{ assignment.end_date_str }}</td>
-        <td>{{ assignment.duration.days }} days</td>
+        <td>{{ assignment.duration.days }}</td>
         <td>{{ assignment.project.price }}</td>
+	<td>{{ assignment.project.additionalWeekPrice }}</td>
+	<td>{{ assignment.additional_weeks }}</td>
+	<td>{{ assignment.additional_weeks_price }}</td>
         <td>{{ assignment.discount }}</td>
-	<td>{{ assignment.item_price }}</td>
+	<td>{{ assignment.total_price }}</td>
 	<td>{{ assignment.invoiceDate.date }}</td>
         <td><a href='/assignmentForm?akey={{ assignment.key }}&vkey={{ v.volunteer.key }}'>Edit</a> | <a href='/assignmentDelete?akey={{ assignment.key }}&vkey={{ v.volunteer.key }}'>Delete</a></td>
       </tr>

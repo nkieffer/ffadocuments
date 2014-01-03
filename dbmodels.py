@@ -48,6 +48,7 @@ class Assignment(db.Model):
     site = db.ReferenceProperty(reference_class=Site)
     start_date = db.DateTimeProperty()
     end_date = db.DateTimeProperty()
+    num_weeks = db.IntegerProperty()
     #do something with this 
     booking_date = db.DateTimeProperty()
     invoiceDate = db.DateTimeProperty()
@@ -75,9 +76,17 @@ class Assignment(db.Model):
     @property
     def duration(self):
         return self.end_date - self.start_date
+    def additional_weeks(self):
+        return self.num_weeks - 2
+    @property
+    def additional_weeks_price(self):
+        return self.project.additionalWeekPrice * self.num_weeks
     @property
     def item_price(self):
         return self.project.price - self.discount
+    @property
+    def total_price(self):
+        return self.additional_weeks_price + self.item_price
     @property
     def start_date_str(self):
         return self.start_date.strftime("%Y-%m-%d")# "%d-%d-%d" % (self.start_date.year, self.start_date.month, self.start_date.day)

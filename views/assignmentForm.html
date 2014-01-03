@@ -65,10 +65,10 @@ volunteerData = {{% spaceless %}{% for vol in v.volunteers %}
         <th><label for="start_date">Start</label></th>
         <td>
 	  <input type="text" class="datepicker" name="start_date" id="start_date" value="{% if v.assignment %}{{ v.assignment.start_date.year }}-{{ v.assignment.start_date.month }}-{{ v.assignment.start_date.day }}{% endif %}{{ v.start_date }}"/>
-	 <label for="nweeks">Weeks: <select id="nweeks">
+	 <label for="nweeks">Weeks: <select id="nweeks" name="weeks">
 	    {% for i in v.weeks %}
 
-	    <option value="{{ i }}">{{ i }}</option>
+	    <option value="{{ i }}" {% ifequal v.assignment.num_weeks i %}selected{% endifequal %}>{{ i }}</option>
 	    {% endfor %}
 	  </select></label>
 	</td>
