@@ -1,12 +1,13 @@
 import datetime
 from google.appengine.ext import db
 from google.appengine.api import users
-
+import logging
 
 class Partner(db.Model):
     name = db.StringProperty()
     abbr = db.StringProperty()
     comment = db.TextProperty()
+    address = db.TextProperty()
     feed_uri = db.StringProperty()
 
 class Volunteer(db.Model):
@@ -70,20 +71,22 @@ class Assignment(db.Model):
                  "additionalWeeks" : duration - 2,
                  "price" : float(self.project.price),
                  "additionalWeekPrice" : self.project.additionalWeekPrice,
-                 "discount" : float(self.discount),
+               #  "discount" : float(self.discount),
                  "invoiced" : self.invoiced,
                  "key" : unicode(self.key())}
     @property
     def duration(self):
         return self.end_date - self.start_date
+    @property
     def additional_weeks(self):
+        logging.info(str(self.num_weeks))
         return self.num_weeks - 2
     @property
     def additional_weeks_price(self):
-        return self.project.additionalWeekPrice * self.num_weeks
+        return self.project.additionalWeekPrice * self.additional_weeks
     @property
     def item_price(self):
-        return self.project.price - self.discount
+        return self.project.price
     @property
     def total_price(self):
         return self.additional_weeks_price + self.item_price

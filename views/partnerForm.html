@@ -9,6 +9,8 @@
       <th><label for="abbr">Abbr</label></th><td><input type="text" name="abbr" id="abbr" value="{{ v.partner.abbr }}"></td>
     </tr>
   </table>
+  <label for="address">Address</label><br/>
+  <textarea name="address" id="address">{{ v.partner.address }}</textarea><br/>
   <label for="comment">Comments</label><br/>
   <textarea name="comment" id="comment">{{ v.partner.comment }}</textarea><br/>
   <input type="submit" value="Save">

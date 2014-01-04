@@ -49,14 +49,20 @@ class PDF(webapp2.RequestHandler):
         style.spaceAfter = inch * 0.5
         style.leftIndent = -inch * 0.5
         address = Paragraph("""
-<font size='24' face='Helvetica-Bold' color='red'>%s</font><br/>
+<font size='24' face='Helvetica-Bold'>%s</font><br/>
 %s
 <br/>
 %s
 <br/>
 <font face='Helvetica-Bold'>SDIN#: %s</font>""" % (settings.companyName, settings.companyAddress.replace("\n","<br/>"), settings.email, settings.sdin), style)
         Story.append(address)
+        
+        partnerAddress = Paragraph("""
+<font face='Helvetica-Bold'>%s</font><br/>
+%s
+""" % (invoice.partner.name, invoice.partner.address.replace("\n","<br/>")), style)
 
+        Story.append(partnerAddress)
         Story.append(Paragraph("<font face='Helvetica-Bold'>Invoice Date:</font> %s <br/><font face='Helvetica-Bold'>Invoice Number:</font> %s" % (timestamp.strftime("%Y-%m-%d"), invoice.key().id()), style))
 
         tableData = []
@@ -74,7 +80,7 @@ class PDF(webapp2.RequestHandler):
         for a in assignments:
             a = a.jsonAssignment
             addWeeks = a["additionalWeeks"] * a["additionalWeekPrice"]                              
-            itemSub = a["price"] + addWeeks- a["discount"]
+            itemSub = a["price"] + addWeeks #- a["discount"]
             assignmentData = [a["volunteer"], 
                               a["start_date"], 
                               a["end_date"],"","",

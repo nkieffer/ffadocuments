@@ -54,7 +54,9 @@ class Edit(webapp2.RequestHandler):
             partner = dbmodels.Partner.get(key)
         partner.name = self.request.get('name')
         partner.abbr = self.request.get('abbr')
+        partner.address = self.request.get('address')
         partner.comment = self.request.get('comment')
+
         partner.put()
         self.redirect('/partners')
 

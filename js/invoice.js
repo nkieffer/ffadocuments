@@ -51,11 +51,11 @@ $('document').ready(function(){
 				     r.price.toFixed(2)+"</td><td>"+
 				     r.additionalWeeks + "</td><td>"+
 				     r.additionalWeekPrice + "</td><td>"+
-				     r.discount.toFixed(2)+"</td><td>"+
-				     ((r.price + (r.additionalWeeks * r.additionalWeekPrice))-r.discount).toFixed(2)+"</td><td>"+
+				    // r.discount.toFixed(2)+"</td><td>"+
+				     ((r.price + (r.additionalWeeks * r.additionalWeekPrice))).toFixed(2)+"</td><td>"+
 				     "<input type='checkbox' "+checked+" disabled='disabled'/></td><td>"+
 				     "<input type='checkbox' class='akey' name='akey:"+r.key+"' "+ on_invoice +"/></td></tr>");
-		    total += (r.price - r.discount)
+		    total += r.price
 		}
 		$('#items').html($("#items").html() +"<tr><td colspan='7'></td><td>"+total.toFixed(2)+"</td></tr>");		}
 	});
