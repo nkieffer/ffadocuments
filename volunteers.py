@@ -17,14 +17,25 @@ class Show(webapp2.RequestHandler):
         v.pageinfo = TemplateValues()
         v.pageinfo.html = views.volunteers
         v.pageinfo.title = "Volunteers"
-        v.volunteers = dbmodels.Volunteer.all()
-        v.volunteers.order('lname')
-        if self.request.get('key'):
-            partner = dbmodels.Partner.get(self.request.get('key'))
-            v.volunteers.filter("partner =", partner)
-            v.pageinfo.title = "Volunteers - %s" % partner.name
+#        v.volunteers = dbmodels.Volunteer.all()
+#        v.volunteers.order('partner').order('lname')
+        v.key = self.request.get('key')
+        view = self.request.get('view')
+        if v.key:
+            v.partner = dbmodels.Partner.get(v.key)
+#            logging.info(partner.volunteers)
+            if view == 'all':
+                v.volunteers = v.partner.volunteers#.filter("partner =", partner)
+            else:
+                v.volunteers = v.partner.active_volunteers
+            v.pageinfo.title = "Volunteers - %s" % v.partner.name
+        else:
+            v.volunteers = dbmodels.Volunteer.all()
+            v.pageinfo.title = "All Volunteers"
+            if view == 'active':
+#                v.volunteers.filter('active_assignments >', 0)
+                v.volunteers = [i for i in v.volunteers if i.active_assignments > 0]
         path = os.path.join(os.path.dirname(__file__), views.main)
-        self.response.headers.add_header("Expires", expdate())
         self.response.out.write( template.render(path, { "v" : v }))
 
 class Form(webapp2.RequestHandler):

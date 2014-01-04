@@ -1,3 +1,4 @@
+<div class="left">
 <h2>{{ v.partner.name }}</h2>
 <form action="partnerEdit" method="post">
   <input type="hidden" name="key" value="{{ v.partner.key }}">
@@ -15,8 +16,14 @@
   <textarea name="comment" id="comment">{{ v.partner.comment }}</textarea><br/>
   <input type="submit" value="Save">
 </form>
+</div>
+<div class="right">
+<h2>Stats</h2>
+Active Volunteers:
+Active Projects:
+</div>
 <div id="invoiceList">
-  <h3>Invoices</h3>
+  <h2>Invoices</h2>
   <a href="/invoiceForm?key={{ v.partner.key }}">New Invoice</a>
 <ol>
     {% for i in v.invoices %}

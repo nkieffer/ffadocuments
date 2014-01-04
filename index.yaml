@@ -104,6 +104,11 @@ indexes:
 - kind: Assignment
   properties:
   - name: volunteer
+  - name: end_date
+
+- kind: Assignment
+  properties:
+  - name: volunteer
   - name: start_date
 
 - kind: Invoice

@@ -9,6 +9,10 @@ class Partner(db.Model):
     comment = db.TextProperty()
     address = db.TextProperty()
     feed_uri = db.StringProperty()
+    
+    @property
+    def active_volunteers(self):
+        return [v for v in self.volunteers if v.active_assignments > 0]
 
 class Volunteer(db.Model):
     fname = db.StringProperty()
@@ -16,7 +20,7 @@ class Volunteer(db.Model):
     country = db.StringProperty()
     DOB = db.DateTimeProperty()
     email = db.EmailProperty()
-    partner = db.ReferenceProperty(reference_class=Partner)
+    partner = db.ReferenceProperty(reference_class=Partner, collection_name="volunteers")
     address = db.TextProperty()
     emergency = db.TextProperty()
     invoiced = db.BooleanProperty(default=False)
@@ -26,6 +30,9 @@ class Volunteer(db.Model):
     def name(self):
         return "%s, %s" % (self.lname, self.fname)
 
+    @property
+    def active_assignments(self):
+         return self.assignments.filter("end_date >=", datetime.datetime.now()).count()
 class Project(db.Model):
     name = db.StringProperty()
     abbr = db.StringProperty()
@@ -43,7 +50,7 @@ class Site(db.Model):
     comment = db.TextProperty()
 
 class Assignment(db.Model):
-    volunteer = db.ReferenceProperty(reference_class=Volunteer)
+    volunteer = db.ReferenceProperty(reference_class=Volunteer, collection_name="assignments")
     partner = db.ReferenceProperty(reference_class=Partner)
     project = db.ReferenceProperty(reference_class=Project, collection_name='assignments')
     site = db.ReferenceProperty(reference_class=Site)
