@@ -29,7 +29,7 @@
     </tr>
   </thead>
   <tbody>
-    {% for site in v.sites %}
+    {% for site in v.project.sites %}
 
     <tr {% ifchanged site.country %}class='endrow'{% endifchanged %}>
       <td>{{ site.name }}</td><td>{{ site.abbr }}</td><td>{{ site.country }}</td><td>{{ site.capacity }}</td><td><a href='/siteForm?skey={{ site.key }}&pkey={{ v.project.key }}'>Edit</a> | <a href='/siteDelete?skey={{ site.key }}&pkey={{ v.project.key }}'>Delete</a></td>

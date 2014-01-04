@@ -37,9 +37,7 @@ class Form(webapp2.RequestHandler):
             pass
         else:
             v.partner = dbmodels.Partner.get(key)
-            v.invoices = dbmodels.Invoice.all()
-            v.invoices.filter("partner =", v.partner.key())
-            v.invoices.order("date")
+            v.partner.invoices.order("date")
             
         path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())

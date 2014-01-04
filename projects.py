@@ -32,10 +32,8 @@ class Form(webapp2.RequestHandler):
             pass
         else:
             v.project = dbmodels.Project.get(key)
-            query = db.GqlQuery("SELECT * FROM Site WHERE project = :1", v.project.key())
-            v.sites = query.fetch(50)
-            v.sites.sort(key=lambda site: site.country)
-            v.sites.sort(key=lambda site: site.name)
+            v.project.sites.order('country')
+            v.project.sites.order('name')
         path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
@@ -59,10 +57,7 @@ class Delete(webapp2.RequestHandler):
     def get(self):
         key = self.request.get('key')
         project = dbmodels.Project.get(key)
-        sites = dbmodels.Site.all()
-        sites.filter("project =",project)
-            #        for s in sites:
-#self.response.out.write(s.name)
+        sites = project.sites
         db.delete(sites)
         db.delete(project)
         self.redirect('/projects')

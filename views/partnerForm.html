@@ -26,7 +26,7 @@ Active Projects:
   <h2>Invoices</h2>
   <a href="/invoiceForm?key={{ v.partner.key }}">New Invoice</a>
 <ol>
-    {% for i in v.invoices %}
+    {% for i in v.partner.invoices %}
     <li> <a href="/invoiceForm?ikey={{ i.key }}">View</a> | <a href="/pdf?ikey={{ i.key }}">PDF</a> | <a href="/invoiceDelete?ikey={{ i.key }}">Delete</a> Date: {{ i.date.date }} Partner: {{ i.partner.abbr }} # Projects: {{ i.akeys|length }}</li>
     {% endfor %}
   </ol>

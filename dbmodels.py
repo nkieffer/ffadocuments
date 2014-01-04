@@ -44,14 +44,14 @@ class Project(db.Model):
 class Site(db.Model):
     name = db.StringProperty()
     abbr = db.StringProperty()
-    project = db.ReferenceProperty(reference_class=Project)
+    project = db.ReferenceProperty(reference_class=Project, collection_name="sites")
     country = db.StringProperty()
     capacity = db.IntegerProperty()
     comment = db.TextProperty()
 
 class Assignment(db.Model):
     volunteer = db.ReferenceProperty(reference_class=Volunteer, collection_name="assignments")
-    partner = db.ReferenceProperty(reference_class=Partner)
+    partner = db.ReferenceProperty(reference_class=Partner, collection_name="assignments")
     project = db.ReferenceProperty(reference_class=Project, collection_name='assignments')
     site = db.ReferenceProperty(reference_class=Site)
     start_date = db.DateTimeProperty()
@@ -112,7 +112,7 @@ class Assignment(db.Model):
         return self.end_date.date()
 
 class Invoice(db.Model):
-    partner = db.ReferenceProperty(reference_class=Partner)
+    partner = db.ReferenceProperty(reference_class=Partner, collection_name="invoices")
     date = db.DateTimeProperty()
     akeys = db.ListProperty(db.Key)
     comment = db.TextProperty()
