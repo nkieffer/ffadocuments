@@ -63,11 +63,12 @@ class PDF(webapp2.RequestHandler):
         tableData.append(["Volunteer",
                           "Start Date", 
                           "End Date", 
-                          "Base Price", 
-                          "Add Weeks", 
-                          "Per Add Week",
-                          "Add Weeks Fee",
-                          "Discount", 
+#                          "Base Price", 
+#                          "Add Weeks", 
+#                          "Per Add Week",
+#                          "Add Weeks Fee",
+#                          "Discount", 
+                          "","",
                           "Item Total"])
         subTotal = 0
         for a in assignments:
@@ -76,31 +77,35 @@ class PDF(webapp2.RequestHandler):
             itemSub = a["price"] + addWeeks- a["discount"]
             assignmentData = [a["volunteer"], 
                               a["start_date"], 
-                              a["end_date"],
-                              "$%.2f" % a["price"], 
-                              "%d" % a["additionalWeeks"],
-                              "$%.2f" % a["additionalWeekPrice"],
-                              "$%.2f" % addWeeks,
-                              "$%.2f" % a["discount"], 
+                              a["end_date"],"","",
+#                              "$%.2f" % a["price"], 
+#                              "%d" % a["additionalWeeks"],
+#                              "$%.2f" % a["additionalWeekPrice"],
+#                              "$%.2f" % addWeeks,
+#                              "$%.2f" % a["discount"], 
                               "$%.2f" % itemSub]
             tableData.append(assignmentData)
             subTotal += itemSub
+        subTotal = subTotal + invoice.fees - invoice.discount
         salesTax = subTotal * 0.07
         total = subTotal + salesTax
+        tableData.append(["","","","","Discount:", "-$%.2f" % invoice.discount])
+        tableData.append(["","","","","Other Fees:", "$%.2f" % invoice.fees])
         tableData.append(["","","","","Sub-Total:", "$%.2f" % subTotal])
         tableData.append(["","","","","Sales Tax:", "$%.2f" % salesTax])
         tableData.append(["","","","","Total:", "$%.2f" % total])
         
         tableStyle = TableStyle(
-            [('ALIGN', (3,0),(5,-1), 'RIGHT'),
+            [('ALIGN', (-1,0),(-1,-1), 'RIGHT'),
              ('LINEBELOW',(0,0),(-1,0), 2, colors.black),
-             ('LINEBELOW',(0,-4),(-1,-4), 2, colors.black),
-             ('FACE', (4,-3),(4,-1), 'Helvetica-Bold'),
+             ('LINEBELOW',(0,-6),(-1,-6), 2, colors.black),
+#             ('ALIGN', (5,-1),(5,-1), 'RIGHT'),
+             ('FACE', (4,-5),(4,-1), 'Helvetica-Bold'),
              ('FACE', (0,0),(-1,0), 'Helvetica-Bold'),
              ('SIZE', (0,0),(-1,-1), 8)])
             
-
-        table = Table(tableData, style=tableStyle)
+        colWidths = [None, None, None,3.5*inch, None,None]
+        table = Table(tableData, colWidths=colWidths, style=tableStyle)
         Story.append(table)
         comment = Paragraph("<b>Comments:</b><br/>%s"%invoice.comment, style)
         Story.append(comment)

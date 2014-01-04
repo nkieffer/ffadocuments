@@ -8,7 +8,6 @@ $('document').ready(function(){
 	alldates = $('#alldates').attr('checked');
 	partnerkey = $('#partnerkey').attr('value');
 	invoicekey = $('#invoicekey').attr('value');
-	alert(invoicekey);
 	$.ajax({
 	    url :'/invoiceJSON',
 	    type: 'GET',
@@ -27,8 +26,6 @@ $('document').ready(function(){
 		$('#items').html("Sumfin effed up");
 	    },
 	    success: function(json){
-		alert("on_invoice\n\n"+json.on_invoice);
-		alert("all\n\n"+json.assignments);
 		$('#items').html("")
 		total = 0
 		for(j in json.assignments){
@@ -40,7 +37,6 @@ $('document').ready(function(){
 			checked="checked";
 		    }
 		    on_invoice = ""
-		    alert(r.key + "\n\n" + json.on_invoice.indexOf(r.key));
 		    if (json.on_invoice.indexOf(r.key) >= 0){
 			on_invoice="checked"
 		    }

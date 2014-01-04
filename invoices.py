@@ -112,6 +112,8 @@ class Save(webapp2.RequestHandler):
             a.put()
         invoice.akeys = keys
         invoice.comment = self.request.get("comment")
+        invoice.discount = float(self.request.get("discount"))
+        invoice.fees = float(self.request.get("fees"))
         invoice.put()
         
         logging.info(invoice)

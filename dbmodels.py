@@ -106,6 +106,8 @@ class Invoice(db.Model):
     date = db.DateTimeProperty()
     akeys = db.ListProperty(db.Key)
     comment = db.TextProperty()
+    discount = db.FloatProperty()
+    fees = db.FloatProperty()
 
 class Settings(db.Model):
     companyName = db.StringProperty()

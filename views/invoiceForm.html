@@ -1,13 +1,18 @@
 <script type="text/javascript" src="/js/invoice.js">
 </script>
 <link type="text/css" rel="stylesheet" href="css/invoiceForm.css"/>
+
+{% if v.invoice %}<a href="/pdf?ikey={{ v.invoice.key }}">Download PDF</a>{% endif %}
+
 <form action="invoiceSave" method="post">
 {% if v.partner %}  <input type="hidden" id="partnerkey" name="partnerkey" value="{{ v.partner.key }}"/> {% endif %}
 {% if v.invoice %}  <input type="hidden" id="invoicekey" name="invoicekey" value="{{ v.invoice.key }}"/> {% endif %}
   <label for="alldates">All Dates:</label><input type="checkbox" class="invoice" name="alldates" id="alldates" checked="checked"/>
   <label for="invoiced">Include Invoiced:</label><input type="checkbox" class="invoice" name="invoiced" id="invoiced" {% if v.invoice %}checked{% endif %}/>  <label for="start_date">Start</label><input type="text" class="datepicker invoice" name="start_date" id="start_date" value="{% now "Y-m" %}-1"/>
   <label for="end_date">End</label><input type="text" class="datepicker invoice" name="end_date" id="end_date" value="{% now "Y-m-t" %}"/>
-
+<br/>
+<label for="discount">Discount: </label><input type="text" id="discount" name="discount" value="{% if v.invoice %}{{ v.invoice.discount }}{% else %}0{% endif %}"/>
+<label for="discount">Other Fees: </label><input type="text" id="fees" name="fees" value="{% if v.invoice %}{{ v.invoice.fees }}{% else %}0{% endif %}"/>
   <table>
     <thead>
       <tr>
@@ -27,24 +32,7 @@
       </tr>
     </thead>
     <tbody id="items">
-<!--      {% for a in v.assignments %}
-      <tr>
-	<td>{{ a.volunteer.lname }}, {{ a.volunteer.fname }}</td>
-	<td>{{a.project.name }}</td>
-	<td>{{ a.site.name }}</td>
-	<td>{{ a.start_date_str }}</td>
-	<td>{{ a.end_date_str }}</td>
-	<td>{{ a.project.price }}</td>
-	<td>{{ a.discount }}</td>
-	<td>{{ a.item_price }} -{{ a.invoiced }}-</td>
-	<td></td>
-	<td><input type="checkbox" id="{{ a.key }}" name="akey:{{ a.key }}"/></td>
-      </tr>
-      {% endfor %}
-      <tr>
-	<td colspan='7'></td><td>{{ v.total }}</td>
-      </tr>
--->    </tbody>
+    </tbody>
   </table>
   <label for="comment">Comment</label><br/>
   <textarea id="comment" name="comment">{{ v.invoice.comment }}</textarea><br/>

@@ -77,9 +77,6 @@ volunteerData = {{% spaceless %}{% for vol in v.volunteers %}
         <th><label for="end_date">End</label></th>
         <td><input type="text" class="datepicker" name="end_date" id="end_date" value="{{ v.assignment.end_date.year }}-{{ v.assignment.end_date.month }}-{{ v.assignment.end_date.day }}"/></td>
       </tr>
-      <tr>
-        <th><label for="discount">discount</label></th><td><input type="text" name="discount" id="discount" value="{% if v.assignment %}{{ v.assignment.discount }}{% else %}0{% endif %}"></td>
-      </tr>
     </table>
     <label for="comment">Comment</label><br/>
     <textarea name="comment" id="comment">{{ v.assignment.comment }}</textarea><br/>
