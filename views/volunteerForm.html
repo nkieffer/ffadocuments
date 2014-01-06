@@ -23,10 +23,12 @@ padding:0 1em;
     </tr>
     <tr>
       <th><label for="partner">Partner</label></th>
+      {% if v.partnerkey %}<input type="hidden" name="partner" value="{{ v.partnerkey }}"/>{% endif %}
       <td>
-        <select id="partner" name="partner">
+
+        <select id="partner" name="partner" {% if v.partnerkey %}disabled{% endif %}>
           {% for partner in v.partners %}
-          <option value="{{ partner.key }}" {% ifequal v.volunteer.partner.key  partner.key %} selected="selected"{% endifequal %}>{{ partner.name }}</option>
+          <option value="{{ partner.key }}" {% ifequal v.volunteer.partner.key  partner.key %} selected{% endifequal %}{% ifequal v.partnerkey  partner.key %} selected{% endifequal %}> {{ partner.name }}</option>
           {% endfor %}
         </select>
       </td>
