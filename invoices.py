@@ -117,7 +117,7 @@ class Save(webapp2.RequestHandler):
         invoice.put()
         
         logging.info(invoice)
-        self.redirect("/invoices?saved=true")
+        self.redirect("/partnerForm?key=%s&saved=true" % str(invoice.partner.key()))
 
 
 class Delete(webapp2.RequestHandler):

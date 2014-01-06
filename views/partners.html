@@ -9,7 +9,7 @@
     {% for partner in v.partners %}
     <tr>
       <td>{{ partner.name }}</td><td>{{ partner.abbr }}</td>
-      <td><a href="invoiceForm?key={{ partner.key }}">Invoice</a> | <a href='volunteers?key={{ partner.key }}'>Volunteers</a> | <a href="partnerForm?key={{ partner.key }}">Edit</a> | <a href='/partnerDelete?key={{ partner.key }}'>Delete</a></td>
+      <td><a href="invoiceForm?key={{ partner.key }}">Invoice</a> | <a href='volunteers?key={{ partner.key }}'>Volunteers</a> | <a href="partnerForm?key={{ partner.key }}">Edit</a> | <a class="delete partner" href='/partnerDelete?key={{ partner.key }}'>Delete</a></td>
     </tr>
 {% endfor %}
   </tbody>
