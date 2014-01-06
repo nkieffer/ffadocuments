@@ -1,4 +1,4 @@
-<a href="volunteerForm" accesskey="a">Add</a> | <a href="volunteers?view=all{% if v.key %}&key={{ v.key }}{% endif %}">Show All{% if v.key %} for {{ v.partner.name }}{% endif %}</a> | <a href="volunteers?view=active{% if v.key %}&key={{ v.key }}{% endif %}">Show Active{% if v.key %} for {{ v.partner.name }}{% endif %}</a>
+<a href="volunteerForm{% if v.partner %}?pkey={{ v.partner.key }}{% endif %}" accesskey="a">Add</a> | <a href="volunteers?view=all{% if v.key %}&key={{ v.key }}{% endif %}">Show All{% if v.key %} for {{ v.partner.name }}{% endif %}</a> | <a href="volunteers?view=active{% if v.key %}&key={{ v.key }}{% endif %}">Show Active{% if v.key %} for {{ v.partner.name }}{% endif %}</a>
 <table>
   <thead>
     <tr>
@@ -10,7 +10,7 @@
     <tr>
       <td>{{ volunteer.lname }}, {{ volunteer.fname }}</td>
       <td>{{ volunteer.partner.abbr }}</td>
-      <td><a href="volunteerForm?key={{ volunteer.key }}">Edit</a> | <a href='assignmentForm?vkey={{ volunteer.key }}'>Add Assignment</a> | <a class="delete volunteer" href="volunteerDelete?key={{ volunteer.key }}">Delete</a></td>
+      <td><a href="volunteerForm?key={{ volunteer.key }}">Edit</a> | <a href='assignmentForm?vkey={{ volunteer.key }}'>Add Assignment</a> | <a class="delete volunteer" href="volunteerDelete?key={{ volunteer.key }}">Delete</a>r</td>
     </tr>
 {% endfor %}
   </tbody>

@@ -45,6 +45,10 @@ class Form(webapp2.RequestHandler):
         v.pageinfo.html = views.volunteerForm
         v.pageinfo.title = "Volunteer Form"
         key = self.request.get('key')
+        try:
+            v.partnerkey = db.Key(self.request.get('pkey'))
+        except db.BadKeyError:
+            pass
         if key == '':
             pass
         else:
