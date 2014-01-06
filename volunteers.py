@@ -80,3 +80,11 @@ class Edit(webapp2.RequestHandler):
             self.redirect('/assignmentForm?vkey='+unicode(volunteer.key()))
         else:
             self.redirect('/volunteers')
+
+class Delete(webapp2.RequestHandler):
+    def get(self):
+        key = self.request.get('key')
+        volunteer = dbmodels.Volunteer.get(key)
+        db.delete(volunteer.assignments)
+        db.delete(volunteer)
+        self.redirect('/volunteers')

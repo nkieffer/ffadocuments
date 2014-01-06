@@ -11,7 +11,7 @@
 <ul>
     {% endifchanged %}
 
-    <li>{{ i.date.date }} <a href="/invoiceForm?ikey={{ i.key }}">View</a> | <a href="/pdf?ikey={{ i.key }}">PDF</a> | <a href="/invoiceDelete?ikey={{ i.key }}">Delete</a></li>
+    <li>{{ i.date.date }} <a href="/invoiceForm?ikey={{ i.key }}">View</a> | <a href="/pdf?ikey={{ i.key }}">PDF</a> | <a class="delete invoice" href="/invoiceDelete?ikey={{ i.key }}">Delete</a></li>
 
     {% endfor %}
 </ul>

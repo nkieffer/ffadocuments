@@ -10,7 +10,7 @@
     <tr>
       <td>{{ volunteer.lname }}, {{ volunteer.fname }}</td>
       <td>{{ volunteer.partner.abbr }}</td>
-      <td><a href="volunteerForm?key={{ volunteer.key }}">Edit</a> | <a href='assignmentForm?vkey={{ volunteer.key }}'>Add Assignment</a></td>
+      <td><a href="volunteerForm?key={{ volunteer.key }}">Edit</a> | <a href='assignmentForm?vkey={{ volunteer.key }}'>Add Assignment</a> | <a class="delete volunteer" href="volunteerDelete?key={{ volunteer.key }}">Delete</a></td>
     </tr>
 {% endfor %}
   </tbody>

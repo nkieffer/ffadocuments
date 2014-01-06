@@ -92,7 +92,7 @@ padding:0 1em;
         <td>{{ assignment.discount }}</td>
 	<td>{{ assignment.total_price }}</td>
 	<td>{{ assignment.invoiceDate.date }}</td>
-        <td><a href='/assignmentForm?akey={{ assignment.key }}&vkey={{ v.volunteer.key }}'>Edit</a> | <a href='/assignmentDelete?akey={{ assignment.key }}&vkey={{ v.volunteer.key }}'>Delete</a></td>
+        <td><a href='/assignmentForm?akey={{ assignment.key }}&vkey={{ v.volunteer.key }}'>Edit</a> | <a class="delete assignment" href='/assignmentDelete?akey={{ assignment.key }}&vkey={{ v.volunteer.key }}'>Delete</a></td>
       </tr>
       {% endfor %}
       <tr>

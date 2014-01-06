@@ -11,7 +11,7 @@
       <td>{{ project.name }}</td>
       <td>{{ project.abbr }}</td>
       <td> {{ project.price }}</td>
-      <td><a href="/siteForm?pkey={{ project.key }}">Add Site</a> | <a href="/projectForm?key={{ project.key }}">Edit</a> | <a href="/projectDelete?key={{ project.key }}">Delete</a></td>
+      <td><a href="/siteForm?pkey={{ project.key }}">Add Site</a> | <a href="/projectForm?key={{ project.key }}">Edit</a> | <a class="delete project" href="/projectDelete?key={{ project.key }}">Delete</a></td>
     </tr>
     {% endfor %}
   </tbody>
