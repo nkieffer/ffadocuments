@@ -4,6 +4,7 @@
 import webapp2
 from google.appengine.ext.webapp import util
 from google.appengine.ext import db
+from google.appengine.api import memcache
 import dbmodels
 import os
 import json
@@ -20,7 +21,7 @@ from dbmodels import Partner, Project, Site, Volunteer
 
 class Show(webapp2.RequestHandler):
     def get(self):
-        
+        t1 = time.time()        
         v = TemplateValues()
         v.pageinfo = TemplateValues()
         v.pageinfo.html = views.assignments
@@ -33,25 +34,37 @@ class Show(webapp2.RequestHandler):
         now = datetime.datetime.now()
         year = now.year
         month = now.month
-        ct = 0
-        v.months = []
-        t1 = time.time()
-        while ct < 3:
-            thisMonth = calgen.Month(year, month, self.request)
-            thisMonth.populate()
-            v.months.append(thisMonth)
-            month += 1
-            if month ==13:
-                month = 1
-                year += 1
-            ct += 1
+
+        v.months = memcache.get("calendar")
+        if v.months is None:
+            v.months = []
+
+            ct = 0
+            while ct < 3:
+                thisMonth = calgen.Month(year, month, self.request)
+                thisMonth.populate()
+                tm = TemplateValues()
+                tm.name = thisMonth.name
+                tm.year = thisMonth.year
+                tm.weeks = thisMonth.weeks
+                v.months.append(tm)
+                month += 1
+                if month ==13:
+                    month = 1
+                    year += 1
+                ct += 1
+            logging.info(v.months)
+            memcache.add("calendar", v.months)
+
+            
+        v.partners = Partner.get_all()#db.GqlQuery("SELECT  name FROM Partner").fetch(1000)
+        v.projects = Project.get_all()#db.GqlQuery("SELECT  name FROM Project").fetch(1000)
+        v.countries = db.GqlQuery("SELECT DISTINCT country FROM Site").fetch(1000)
+        v.sites = Site.get_all()#db.GqlQuery("SELECT name FROM Site").fetch(1000)
 
         t2 = time.time()
         logging.info("calgen: %f" % (t2 - t1))
-        v.partners = db.GqlQuery("SELECT  name FROM Partner").fetch(1000)
-        v.projects = db.GqlQuery("SELECT  name FROM Project").fetch(1000)
-        v.countries = db.GqlQuery("SELECT DISTINCT country FROM Site").fetch(1000)
-        v.sites = db.GqlQuery("SELECT name FROM Site").fetch(1000)
+
         path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
@@ -114,6 +127,7 @@ class Edit(webapp2.RequestHandler):
         assignment.comment = self.request.get('comment')
 #        assignment.discount = float(self.request.get('discount'))
         assignment.put()
+        memcache.delete("calendar")
         logging.info( str(assignment.start_date)+" "+ str(assignment.end_date))
         self.redirect('/volunteerForm?key=' + vkey)
 
@@ -134,7 +148,7 @@ class ajaxAssignment(webapp2.RequestHandler):
         project = dbmodels.Project.get(self.request.get('project'))
         site = dbmodels.Site.get(self.request.get('site'))
         respData = []
-        assignments = dbmodels.Assignment.all()
+        assignments = dbmodels.Assignment.get_all()
         assignments.filter("site = ", site)
 #        assignments.filter("start_date >=",
 #                           datetime.datetime(*[int(x) for x in self.request.get('start_date').split("-")]))

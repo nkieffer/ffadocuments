@@ -25,12 +25,14 @@ class Month():
         site = self.request.get("site")
 
         oneweek = datetime.timedelta(days=7)
+        weeks = [x[0] for x in  self.calendar.monthdatescalendar(self.year, self.month) if x[0].month == self.month]
+        a_query = Assignment.get_all()#_all()
+        a_query.filter("end_date >", weeks[0])
+        for week in weeks:
+            a_query.filter("end_date >", week).order("end_date")
+#            a_query = db.GqlQuery("SELECT * FROM Assignment WHERE start_date < :1 ORDER BY start_date, end_date DESC", week + oneweek)
 
-        for week in [x[0] for x in  self.calendar.monthdatescalendar(self.year, self.month) if x[0].month == self.month]:
-
-            a_query = db.GqlQuery("SELECT * FROM Assignment WHERE start_date < :1 ORDER BY start_date, end_date DESC", week + oneweek)
-
-            assignments = [a for a in a_query.run()]
+            assignments = [a for a in a_query]
             assignments = filter(lambda a: week < a.end_date.date(), assignments)
             if country:
                 assignments = filter(lambda a: a.site.country == country, assignments)
@@ -63,7 +65,6 @@ class Week():
         self.__assignments = assignments
         for a in self.__assignments:
             a.weeks_remaining = ((a.end_date.date() - self.week).days + 1)/7
-            logging.info(a.weeks_remaining)
             a.first_week = (self.week + oneweek) >= a.start_date_date >= self.week
             a.last_week = (self.week + oneweek) >= a.end_date_date >= self.week
 

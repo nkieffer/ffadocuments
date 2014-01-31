@@ -3,6 +3,7 @@
 import webapp2
 from google.appengine.ext.webapp import util
 from google.appengine.ext import db
+from google.appengine.api import memcache
 import dbmodels
 import os
 import datetime
@@ -17,24 +18,21 @@ class Show(webapp2.RequestHandler):
         v.pageinfo = TemplateValues()
         v.pageinfo.html = views.volunteers
         v.pageinfo.title = "Volunteers"
-#        v.volunteers = dbmodels.Volunteer.all()
-#        v.volunteers.order('partner').order('lname')
         v.key = self.request.get('key')
         view = self.request.get('view')
         if v.key:
             v.partner = dbmodels.Partner.get(v.key)
-#            logging.info(partner.volunteers)
             if view == 'all':
-                v.volunteers = v.partner.volunteers#.filter("partner =", partner)
+                v.volunteers = v.partner.allVolunteers
             else:
-                v.volunteers = v.partner.active_volunteers
+                v.volunteers = v.partner.activeVolunteers
             v.pageinfo.title = "Volunteers - %s" % v.partner.name
         else:
-            v.volunteers = dbmodels.Volunteer.all()
             v.pageinfo.title = "All Volunteers"
-            if view == 'active':
-#                v.volunteers.filter('active_assignments >', 0)
-                v.volunteers = [i for i in v.volunteers if i.active_assignments > 0]
+            if view != 'active':
+                v.volunteers = dbmodels.Volunteer.get_all()
+            else:
+                v.volunteers = dbmodels.Volunteer.get_active()
         path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.out.write( template.render(path, { "v" : v }))
 
@@ -53,12 +51,12 @@ class Form(webapp2.RequestHandler):
             pass
         else:
             v.volunteer = dbmodels.Volunteer.get(key)
-            v.assignments = dbmodels.Assignment.all()
+            v.assignments = dbmodels.Assignment.get_all()
             v.assignments.filter("volunteer =", v.volunteer.key()).order("start_date")
             v.total_price = 0.0
             for a in v.assignments:
                 v.total_price += a.total_price
-        v.partners = dbmodels.Partner.all()
+        v.partners = dbmodels.Partner.get_all()
         
         path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.out.write(template.render(path, { "v" : v }))
@@ -80,6 +78,13 @@ class Edit(webapp2.RequestHandler):
         volunteer.emergency = self.request.get('emergency')
         volunteer.comment = self.request.get('comment')
         volunteer.put()
+        memcache.delete("volunteer:all")
+        memcache.delete("volunteer:all:%s" % volunteer.partner.key())
+        memcache.delete("partner:volunteer:active:%s" % volunteer.partner.key())
+        memcache.delete("partner:volunteer:all:%s" % volunteer.partner.key())
+        memcache.delete("volunteer:delete")
+        memcache.delete("volunteer:active")
+        logging.info("cleared the cache")
         if key == "":
             self.redirect('/assignmentForm?vkey='+unicode(volunteer.key()))
         else:
@@ -89,6 +94,14 @@ class Delete(webapp2.RequestHandler):
     def get(self):
         key = self.request.get('key')
         volunteer = dbmodels.Volunteer.get(key)
+        memcache.delete("volunteer:all")
+        memcache.delete("volunteer:all:%s" % volunteer.partner.key())
+        memcache.delete("partner:volunteer:active:%s" % volunteer.partner.key())
+        memcache.delete("partner:volunteer:all:%s" % volunteer.partner.key())
+        memcache.delete("volunteer:delete")
+        memcache.delete("volunteer:active")
+        logging.info("cleared the cache")
+
         db.delete(volunteer.assignments)
         db.delete(volunteer)
         self.redirect('/volunteers')

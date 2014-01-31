@@ -1,6 +1,7 @@
 import datetime
 from google.appengine.ext import db
 from google.appengine.api import users
+from google.appengine.api import memcache
 import logging
 
 class Partner(db.Model):
@@ -11,9 +12,39 @@ class Partner(db.Model):
     feed_uri = db.StringProperty()
     
     @property
-    def active_volunteers(self):
-        return [v for v in self.volunteers if v.active_assignments > 0]
+    def activeVolunteers(self):
+        cacheKey = "partner:volunteer:active:%s" % self.key()
+        activeVolunteers = memcache.get(cacheKey)
+        if activeVolunteers is None:
+            logging.info("creating cache: "  + cacheKey)
+            activeVolunteers = [v for v in self.volunteers if v.active_assignments > 0]
+            memcache.add(cacheKey, activeVolunteers)
+        else:
+            logging.info("using cache: " + cacheKey)
+        return activeVolunteers
 
+    @property
+    def allVolunteers(self):
+        cacheKey = "partner:volunteer:all:%s" % self.key()
+        allVolunteers = memcache.get(cacheKey)
+        if allVolunteers is None:
+            logging.info("creating cache: "  + cacheKey)
+            allVolunteers = [a for a in self.volunteers.order("lname")]
+            memcache.add(cacheKey, allVolunteers)
+        else:
+            logging.info("using cache: " + cacheKey)
+        return allVolunteers
+    
+    @classmethod
+    def get_all(cls):
+        cacheKey = "partner:all"
+        allPartners = memcache.get(cacheKey)
+        if allPartners is None:
+            logging.info("creating cache: "  + cacheKey)
+            allPartners = cls.all()
+            memcache.add(cacheKey, allPartners)
+        return allPartners
+    
 class Volunteer(db.Model):
     fname = db.StringProperty()
     lname = db.StringProperty()
@@ -26,6 +57,46 @@ class Volunteer(db.Model):
     invoiced = db.BooleanProperty(default=False)
     comment = db.TextProperty() # not in calender
     status = db.TextProperty() # This is on calender and includes info about paperwork
+    @classmethod
+    def get_all(cls):
+        cacheKey = "volunteer:all"
+        allInstances = memcache.get(cacheKey)
+        if allInstances is None:
+            logging.info("creating cache: " + cacheKey)
+            allInstances = cls.all().order('lname')
+            allInstances = [a for a in allInstances]
+            memcache.add(cacheKey, allInstances)
+        else:
+            logging.info("using cache: " + cacheKey)
+        return allInstances
+
+    @classmethod
+    def get_active(cls):
+        cacheKey = "volunteer:active"
+        allInstances = memcache.get(cacheKey)
+        if allInstances is None:
+            logging.info("creating cache: " + cacheKey)
+            allInstances = cls.all()
+            allInstances = [a for a in allInstances if a.active_assignments > 0]
+            memcache.add(cacheKey, allInstances)
+        else:
+            logging.info("using cache: " + cacheKey)
+        return allInstances
+
+    @classmethod
+    def get_for_partner(cls, partnerkey):
+        cacheKey = "volunteers_for_partner:%s" % partnerkey
+        allInstances = memcache.get(cacheKey)
+        if allInstances is None:
+            logging.info("creating cache: " + cacheKey)
+            allInstances = cls.all()
+            allInstances.filter("partner =", partnerkey)
+            allInstances = [a for a in allInstances]
+            memcache.add(cacheKey, allInstances)
+        else:
+            logging.info("using cache: " + cacheKey)
+        return allInstances
+        
     @property
     def name(self):
         return "%s, %s" % (self.lname, self.fname)
@@ -40,6 +111,18 @@ class Project(db.Model):
     additionalWeekPrice = db.FloatProperty()
     sales_tax = db.FloatProperty(default=.075)
     comment = db.TextProperty()
+
+    @classmethod
+    def get_all(cls):
+        cacheKey = "project:all"
+        allInstances = memcache.get(cacheKey)
+        if allInstances is None:
+            logging.info("creating cache: "  + cacheKey)
+            allInstances = [a for a in cls.all()]
+            memcache.add(cacheKey, allInstances)
+        else:
+            logging.info("using cache: " + cacheKey)
+        return allInstances
     
 class Site(db.Model):
     name = db.StringProperty()
@@ -48,6 +131,17 @@ class Site(db.Model):
     country = db.StringProperty()
     capacity = db.IntegerProperty()
     comment = db.TextProperty()
+    @classmethod
+    def get_all(cls):
+        cacheKey = "site:all"
+        allInstances = memcache.get(cacheKey)
+        if allInstances is None:
+            logging.info("creating cache: "  + cacheKey)
+            allInstances = [a for a in cls.all()]
+            memcache.add(cacheKey, allInstances)
+        else:
+            logging.info("using cache: " + cacheKey)
+        return allInstances
 
 class Assignment(db.Model):
     volunteer = db.ReferenceProperty(reference_class=Volunteer, collection_name="assignments")
@@ -63,6 +157,19 @@ class Assignment(db.Model):
     discount = db.FloatProperty()
     invoiced = db.BooleanProperty(default=False)
     comment = db.TextProperty()
+
+    @classmethod
+    def get_all(cls):
+        cacheKey = "assignment:all"
+        allInstances = memcache.get(cacheKey)
+        if allInstances is None:
+            logging.info("creating cache: "  + cacheKey)
+            allInstances = cls.all()
+            memcache.add(cacheKey, allInstances)
+        else:
+            logging.info("using cache: " + cacheKey)
+        return allInstances
+    
     @property
     def projectName(self):
         return self.project.name
@@ -118,6 +225,16 @@ class Invoice(db.Model):
     comment = db.TextProperty()
     discount = db.FloatProperty()
     fees = db.FloatProperty()
+    @classmethod
+    def get_all(cls):
+        allInstances = memcache.get("invoice:all")
+        if allInstances is None:
+            logging.info("creating cache: "  + cacheKey)
+            allInstances = cls.all()
+            memcache.get("invoice:all", allInstances)
+        else:
+            logging.info("using cache: " + cacheKey)
+        return allInstances
 
 class Settings(db.Model):
     companyName = db.StringProperty()

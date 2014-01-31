@@ -10,7 +10,7 @@ import views
 import json
 import logging
 from google.appengine.ext.webapp import template
-
+from dateutil.relativedelta import relativedelta
 import logging
 
 class Show(webapp2.RequestHandler):
@@ -81,10 +81,14 @@ class JSON(webapp2.RequestHandler):
         assignments.order("start_date").order("end_date")#.order("volunteer.lname")
         assignments.filter("partner =", p.key())
         if alldates != "checked":
-            assignments.filter("start_date >=", strtodt(start_date))
-            assignments = [a.jsonAssignment for a in assignments if a.end_date <= strtodt(end_date)]
-        else:
-            assignments = [a.jsonAssignment for a in assignments]
+            start_date = strtodt(start_date)
+            end_date = strtodt(end_date) + relativedelta(day=1, months=1)
+            logging.info((start_date,  end_date))
+            assignments.filter("start_date >=", start_date)
+            assignments.filter("start_date <", end_date)
+        
+
+        assignments = [a.jsonAssignment for a in assignments]
         assignments.sort(lambda a,b: cmp(a['volunteer'].lower(),b['volunteer'].lower()))
         logging.info(len(assignments))
         jsonResponse = {"assignments":assignments, "on_invoice": on_invoice }
