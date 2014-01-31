@@ -16,7 +16,7 @@ class Show(webapp2.RequestHandler):
         v.pageinfo = TemplateValues()
         v.pageinfo.html = "sites.html"
         v.pageinfo.title = "Sites"
-        v.sites = dbmodels.Site.all()
+        v.sites = dbmodels.Site.get_all()
         path = os.path.join(os.path.dirname(__file__), 'sites.html')
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))

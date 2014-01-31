@@ -67,12 +67,12 @@ $('document').ready(function(){
 
     $('.assignment').each(function(){
 	$(this).click(function(){
-	    key = $(this).attr('id');
+	    key = $(this).attr('data-akey');
 	    if($(this).hasClass('highlighted')){
 		$('tr').removeClass('highlighted');
 	    } else {
 		$('tr').removeClass('highlighted');
-		$('tr#'+key).addClass('highlighted');
+		$('tr[data-akey='+key+']').addClass('highlighted');
 	    }
 	});
     });

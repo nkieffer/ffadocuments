@@ -103,6 +103,12 @@ indexes:
 
 - kind: Assignment
   properties:
+  - name: start_date
+    direction: desc
+  - name: end_date
+
+- kind: Assignment
+  properties:
   - name: volunteer
   - name: end_date
 

@@ -2,6 +2,7 @@
 import webapp2
 from google.appengine.ext.webapp import util
 from google.appengine.ext import db
+from google.appengine.api import memcache
 import dbmodels
 import os
 import datetime
@@ -21,7 +22,7 @@ class Show(webapp2.RequestHandler):
         v.pageinfo.html = views.partners
         logging.info(views.partners)
         v.pageinfo.title = "Partners"
-        v.partners = dbmodels.Partner.all()
+        v.partners = dbmodels.Partner.get_all()
         path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
@@ -56,6 +57,7 @@ class Edit(webapp2.RequestHandler):
         partner.comment = self.request.get('comment')
 
         partner.put()
+        memcache.delete("partner:all")
         self.redirect('/partners')
 
 

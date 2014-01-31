@@ -25,12 +25,8 @@ $('document').ready(function(){
 		       "Click OK to delete."
 		      );
     });
-//	try {
-
-//	}catch (err){
-		
-//	}
-	
-  //  }
-    //ajaxInvoice();
+    $('#volunteers').tablesorter({ headers: {0: {sorter : true},
+					     1: {sorter : true},
+					     2: {sorter : false}},
+				   sortList: [[0,0]]});
 })
