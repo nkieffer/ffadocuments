@@ -35,26 +35,33 @@ class Show(webapp2.RequestHandler):
         year = now.year
         month = now.month
 
-        v.months = memcache.get("calendar")
-        if v.months is None:
-            v.months = []
+        #v.months = memcache.get("calendar")
+        #if v.months is None:
+        v.months = []
 
-            ct = 0
-            while ct < 3:
+        ct = 0
+        while ct < 3:
+            cacheKey = "calendar:%s:%s" % (year, month)
+            tm = memcache.get(cacheKey)
+            if tm is None:
                 thisMonth = calgen.Month(year, month, self.request)
                 thisMonth.populate()
                 tm = TemplateValues()
                 tm.name = thisMonth.name
                 tm.year = thisMonth.year
                 tm.weeks = thisMonth.weeks
-                v.months.append(tm)
-                month += 1
-                if month ==13:
-                    month = 1
-                    year += 1
-                ct += 1
-            logging.info(v.months)
-            memcache.add("calendar", v.months)
+                logging.info("Creating cache: %s" % cacheKey)
+                memcache.add(cacheKey, tm)
+            else:
+                logging.info("Using cache: %s" % cacheKey)
+            v.months.append(tm)
+            month += 1
+            if month ==13:
+                month = 1
+                year += 1
+            ct += 1
+        logging.info(v.months)
+        #memcache.add("calendar", v.months)
 
             
         v.partners = Partner.get_all()#db.GqlQuery("SELECT  name FROM Partner").fetch(1000)
