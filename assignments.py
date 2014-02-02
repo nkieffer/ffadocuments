@@ -51,22 +51,29 @@ class Show(webapp2.RequestHandler):
                 tm.year = thisMonth.year
                 tm.weeks = thisMonth.weeks
                 logging.info("Creating cache: %s" % cacheKey)
+
                 memcache.add(cacheKey, tm)
             else:
                 logging.info("Using cache: %s" % cacheKey)
             v.months.append(tm)
+            try:
+                logging.info("+==========")
+                logging.info(tm.weeks[0].assignments)
+                logging.info("==========+")
+            except:
+                pass
             month += 1
             if month ==13:
                 month = 1
                 year += 1
             ct += 1
-        logging.info(v.months)
-        #memcache.add("calendar", v.months)
-
-            
         v.partners = Partner.get_all()#db.GqlQuery("SELECT  name FROM Partner").fetch(1000)
         v.projects = Project.get_all()#db.GqlQuery("SELECT  name FROM Project").fetch(1000)
-        v.countries = db.GqlQuery("SELECT DISTINCT country FROM Site").fetch(1000)
+        v.countries = memcache.get("countries")
+        if v.countries is None:
+            v.countries = db.GqlQuery("SELECT DISTINCT country FROM Site").fetch(1000)
+            memcache.add("countries", v.countries)
+
         v.sites = Site.get_all()#db.GqlQuery("SELECT name FROM Site").fetch(1000)
 
         t2 = time.time()

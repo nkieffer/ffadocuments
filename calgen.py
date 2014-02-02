@@ -33,7 +33,7 @@ class Month():
 #            a_query = db.GqlQuery("SELECT * FROM Assignment WHERE start_date < :1 ORDER BY start_date, end_date DESC", week + oneweek)
 
             assignments = [a for a in a_query]
-            assignments = filter(lambda a: week < a.end_date.date(), assignments)
+            assignments = filter(lambda a: week >= a.start_date.date(), assignments)
             if country:
                 assignments = filter(lambda a: a.site.country == country, assignments)
             if partner:
