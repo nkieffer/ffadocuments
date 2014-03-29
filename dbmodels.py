@@ -1,8 +1,28 @@
 import datetime
 from google.appengine.ext import db
+from google.appengine.datastore import entity_pb
 from google.appengine.api import users
 from google.appengine.api import memcache
 import logging
+
+def serialize_entities(models):
+    if models is None:
+        return None
+    elif isinstance(models, db.Model):
+        # Just one instance
+        return db.model_to_protobuf(models).Encode()
+    else:
+        # A list
+        return [db.model_to_protobuf(x).Encode() for x in models]
+    
+def deserialize_entities(data):
+    if data is None:
+        return None
+    elif isinstance(data, str):
+        # Just one instance
+        return db.model_from_protobuf(entity_pb.EntityProto(data))
+    else:
+        return [db.model_from_protobuf(entity_pb.EntityProto(x)) for x in data]
 
 class Partner(db.Model):
     name = db.StringProperty()
@@ -170,6 +190,18 @@ class Assignment(db.Model):
             logging.info("using cache: " + cacheKey)
         return allInstances
     
+    @classmethod
+    def get_all_for_volunteer(cls, vkey):
+        cacheKey = "assignment:volunteer:%s" % vkey
+        allInstances = memcache.get(cacheKey)
+        if allInstances is None:
+            logging.info("creating cache: "  + cacheKey)
+            allInstances = cls.all().filter("volunteer =", vkey).order("start_date")
+            memcache.add(cacheKey, allInstances)
+        else:
+            logging.info("using cache: " + cacheKey)
+        return allInstances
+
     @property
     def projectName(self):
         return self.project.name
@@ -246,3 +278,4 @@ class Settings(db.Model):
     bankAcctNum = db.StringProperty()
     email = db.EmailProperty()
     sdin = db.StringProperty()
+    sales_tax = db.FloatProperty(default=0.0)

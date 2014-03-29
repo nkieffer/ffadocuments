@@ -51,7 +51,7 @@ class Form(webapp2.RequestHandler):
             pass
         else:
             v.volunteer = dbmodels.Volunteer.get(key)
-            v.assignments = dbmodels.Assignment.get_all()
+            v.assignments = dbmodels.Assignment.get_all_for_volunteer(v.volunteer.key())
             v.assignments.filter("volunteer =", v.volunteer.key()).order("start_date")
             v.total_price = 0.0
             for a in v.assignments:

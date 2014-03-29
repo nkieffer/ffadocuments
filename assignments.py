@@ -142,6 +142,7 @@ class Edit(webapp2.RequestHandler):
 #        assignment.discount = float(self.request.get('discount'))
         assignment.put()
         memcache.delete("calendar")
+        memcache.delete("assignment:volunteer:%s" % vkey)
         logging.info( str(assignment.start_date)+" "+ str(assignment.end_date))
         self.redirect('/volunteerForm?key=' + vkey)
 

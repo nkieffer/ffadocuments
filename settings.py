@@ -44,5 +44,6 @@ class Edit(webapp2.RequestHandler):
         logging.info(settings.bankAcctNum)
         settings.email = request.get('email')
         settings.sdin = request.get('sdin')
+        settings.sales_tax = float(request.get('sales_tax'))
         settings.put()
         self.redirect('/settings?saved=1')

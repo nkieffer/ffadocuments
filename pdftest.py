@@ -93,7 +93,7 @@ class PDF(webapp2.RequestHandler):
             tableData.append(assignmentData)
             subTotal += itemSub
         subTotal = subTotal + invoice.fees - invoice.discount
-        salesTax = subTotal * 0.07
+        salesTax = subTotal * settings.sales_tax
         total = subTotal + salesTax
         tableData.append(["","","","","Discount:", "-$%.2f" % invoice.discount])
         tableData.append(["","","","","Other Fees:", "$%.2f" % invoice.fees])
