@@ -213,6 +213,7 @@ class Assignment(db.Model):
                  "site" : self.site.name,
                  "start_date" : self.start_date_str,
                  "end_date" : self.end_date_str,
+                 "num_weeks" : (self.end_date - self.start_date).days / 7.0,
                  "duration" : duration,
                  "additionalWeeks" : duration - 2,
                  "price" : float(self.project.price),
@@ -275,7 +276,11 @@ class Settings(db.Model):
     companyPhone2 = db.PhoneNumberProperty()
     logo = db.BlobProperty()
     bankName = db.StringProperty()
+    bankAddress = db.PostalAddressProperty()
+    bankAcctName = db.StringProperty()
     bankAcctNum = db.StringProperty()
+    routingNumber = db.StringProperty()
+    swiftCode = db.StringProperty()
     email = db.EmailProperty()
     sdin = db.StringProperty()
     sales_tax = db.FloatProperty(default=0.0)

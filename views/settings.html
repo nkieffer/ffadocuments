@@ -27,8 +27,25 @@ alert("Settings saved.");
 	<th>Bank Name</th><td><input type="text" name="bankName" value="{{ v.settings.bankName }}"/></td>
     </tr>
     <tr>
+	<th>Bank Address</th>
+	<td>
+	    <textarea name="bankAddress" rows="4" cols="50">{{ v.settings.bankAddress }}</textarea>
+	</td>
+    </tr>
+	
+    <tr>
+	<th>Acct. Name</th><td><input type="text" name="bankAcctName" value="{{ v.settings.bankAcctName }}"/></td>
+    </tr>
+    <tr>
 	<th>Acct. #</th><td><input type="text" name="bankAcctNum" value="{{ v.settings.bankAcctNum }}"/></td>
     </tr>
+    <tr>
+	<th>Routing #</th><td><input type="text" name="routing_number" value="{{ v.settings.routingNumber }}"/></td>
+    </tr>
+    <tr>
+	<th>Swift Code</th><td><input type="text" name="swift_code" value="{{ v.settings.swiftCode }}"/></td>
+    </tr>
+
     <tr>
       <th>SDIN#</th><td><input type="text" name="sdin" value="{{ v.settings.sdin }}"/></td>
     </tr>

@@ -6,6 +6,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors 
 from reportlab.pdfgen import canvas
+from reportlab.lib.enums import TA_LEFT
 import datetime
 #from google.appengine.ext import webapp
 import webapp2
@@ -37,6 +38,7 @@ class PDF(webapp2.RequestHandler):
     def get(self):
         invoice = dbmodels.Invoice.get(self.request.get("ikey"))
         assignments = dbmodels.Assignment.get([str(key) for key in invoice.akeys])
+        assignments = sorted(assignments, key=lambda assignment: assignment.start_date)
         settings = dbmodels.Settings.get(db.Key.from_path("Settings", "main"))
         timestamp = datetime.datetime.now()
         self.response.headers.add_header("Content-type", "application/pdf")
@@ -67,13 +69,10 @@ class PDF(webapp2.RequestHandler):
 
         tableData = []
         tableData.append(["Volunteer",
+                          "Project", 
                           "Start Date", 
-                          "End Date", 
-#                          "Base Price", 
-#                          "Add Weeks", 
-#                          "Per Add Week",
-#                          "Add Weeks Fee",
-#                          "Discount", 
+                          "# Weeks", 
+                          
                           "","",
                           "Item Total"])
         subTotal = 0
@@ -82,8 +81,11 @@ class PDF(webapp2.RequestHandler):
             addWeeks = a["additionalWeeks"] * a["additionalWeekPrice"]                              
             itemSub = a["price"] + addWeeks #- a["discount"]
             assignmentData = [a["volunteer"], 
+                              a["project"],
                               a["start_date"], 
-                              a["end_date"],"","",
+                              a["num_weeks"],
+                              "",
+                              "",
 #                              "$%.2f" % a["price"], 
 #                              "%d" % a["additionalWeeks"],
 #                              "$%.2f" % a["additionalWeekPrice"],
@@ -95,27 +97,43 @@ class PDF(webapp2.RequestHandler):
         subTotal = subTotal + invoice.fees - invoice.discount
         salesTax = subTotal * settings.sales_tax
         total = subTotal + salesTax
-        tableData.append(["","","","","Discount:", "-$%.2f" % invoice.discount])
-        tableData.append(["","","","","Other Fees:", "$%.2f" % invoice.fees])
-        tableData.append(["","","","","Sub-Total:", "$%.2f" % subTotal])
-        tableData.append(["","","","","Sales Tax:", "$%.2f" % salesTax])
-        tableData.append(["","","","","Total:", "$%.2f" % total])
+        tableData.append(["","","","","","Discount:", "-$%.2f" % invoice.discount])
+        tableData.append(["","","","","","Other Fees:", "$%.2f" % invoice.fees])
+        tableData.append(["","","","","","Sub-Total:", "$%.2f" % subTotal])
+        tableData.append(["","","","","","Sales Tax:", "$%.2f" % salesTax])
+        tableData.append(["","","","","","Total:", "$%.2f" % total])
         
         tableStyle = TableStyle(
             [('ALIGN', (-1,0),(-1,-1), 'RIGHT'),
              ('LINEBELOW',(0,0),(-1,0), 2, colors.black),
              ('LINEBELOW',(0,-6),(-1,-6), 2, colors.black),
 #             ('ALIGN', (5,-1),(5,-1), 'RIGHT'),
-             ('FACE', (4,-5),(4,-1), 'Helvetica-Bold'),
+             ('FACE', (5,-5),(5,-1), 'Helvetica-Bold'),
              ('FACE', (0,0),(-1,0), 'Helvetica-Bold'),
              ('SIZE', (0,0),(-1,-1), 8)])
             
-        colWidths = [None, None, None,3.5*inch, None,None]
-        table = Table(tableData, colWidths=colWidths, style=tableStyle)
+        colWidths = [None, None, None, None,2*inch, None,None]
+        table = Table(tableData, colWidths=colWidths, style=tableStyle, hAlign=TA_LEFT)
+        table.hAlign = TA_LEFT
         Story.append(table)
-        comment = Paragraph("<b>Comments:</b><br/>%s"%invoice.comment, style)
-        Story.append(comment)
-        bankInfo = Paragraph("%s Acct #: %s" % (settings.bankName, settings.bankAcctNum), style)
+        if invoice.comment != "":
+            comment = Paragraph("<b>Comments:</b><br/>%s"%invoice.comment, style)
+            Story.append(comment)
+        bankInfo = Paragraph("""
+<b>Bank Info</b><br/>
+%s<br/>
+%s<br/>
+<br/>
+<b>Acct. Name:</b> %s<br/> 
+<b>Acct. #:</b> %s<br/> 
+<b>Routing #:</b> %s<br/> 
+<b>Swift Code:</b> %s<br/> 
+""" % (settings.bankName, 
+       settings.bankAddress.replace("\n", "<br/>"),
+       settings.bankAcctName,
+       settings.bankAcctNum,
+       settings.routingNumber,
+       settings.swiftCode), style)
         Story.append(bankInfo)
         
         doc.build(Story, onFirstPage=firstPage, onLaterPages=laterPages)
