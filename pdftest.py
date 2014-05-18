@@ -6,7 +6,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors 
 from reportlab.pdfgen import canvas
-from reportlab.lib.enums import TA_LEFT
+from reportlab.lib.enums import TA_LEFT, TA_RIGHT
 import datetime
 #from google.appengine.ext import webapp
 import webapp2
@@ -44,12 +44,12 @@ class PDF(webapp2.RequestHandler):
         self.response.headers.add_header("Content-type", "application/pdf")
         self.response.headers.add_header("Content-disposition", 'attachment; filename=%s-%s.pdf' % (str(invoice.partner.name), timestamp.strftime("%Y-%m-%d")))
 
-        doc = SimpleDocTemplate(self.response.out)
+        doc = SimpleDocTemplate(self.response.out, leftMargin=inch*.5)
         doc.timestamp = timestamp
         Story = []
         style = styles["Normal"]
         style.spaceAfter = inch * 0.5
-        style.leftIndent = -inch * 0.5
+     #   style.leftIndent = -inch #* 0.5
         address = Paragraph("""
 <font size='24' face='Helvetica-Bold'>%s</font><br/>
 %s
@@ -58,7 +58,6 @@ class PDF(webapp2.RequestHandler):
 <br/>
 <font face='Helvetica-Bold'>SDIN#: %s</font>""" % (settings.companyName, settings.companyAddress.replace("\n","<br/>"), settings.email, settings.sdin), style)
         Story.append(address)
-        
         partnerAddress = Paragraph("""
 <font face='Helvetica-Bold'>%s</font><br/>
 %s
@@ -73,7 +72,7 @@ class PDF(webapp2.RequestHandler):
                           "Start Date", 
                           "# Weeks", 
                           
-                          "","",
+                          "",#"",
                           "Item Total"])
         subTotal = 0
         for a in assignments:
@@ -83,38 +82,33 @@ class PDF(webapp2.RequestHandler):
             assignmentData = [a["volunteer"], 
                               a["project"],
                               a["start_date"], 
-                              a["num_weeks"],
+                              int(a["num_weeks"]),
+                            #  "",
                               "",
-                              "",
-#                              "$%.2f" % a["price"], 
-#                              "%d" % a["additionalWeeks"],
-#                              "$%.2f" % a["additionalWeekPrice"],
-#                              "$%.2f" % addWeeks,
-#                              "$%.2f" % a["discount"], 
                               "$%.2f" % itemSub]
             tableData.append(assignmentData)
             subTotal += itemSub
         subTotal = subTotal + invoice.fees - invoice.discount
         salesTax = subTotal * settings.sales_tax
         total = subTotal + salesTax
-        tableData.append(["","","","","","Discount:", "-$%.2f" % invoice.discount])
-        tableData.append(["","","","","","Other Fees:", "$%.2f" % invoice.fees])
-        tableData.append(["","","","","","Sub-Total:", "$%.2f" % subTotal])
-        tableData.append(["","","","","","Sales Tax:", "$%.2f" % salesTax])
-        tableData.append(["","","","","","Total:", "$%.2f" % total])
+        tableData.append(["","","","","Discount:", "-$%.2f" % invoice.discount])
+        tableData.append(["","","","","Other Fees:", "$%.2f" % invoice.fees])
+        tableData.append(["","","","","Sub-Total:", "$%.2f" % subTotal])
+        tableData.append(["","","","","Sales Tax:", "$%.2f" % salesTax])
+        tableData.append(["","","","","Total:", "$%.2f" % total])
         
         tableStyle = TableStyle(
             [('ALIGN', (-1,0),(-1,-1), 'RIGHT'),
              ('LINEBELOW',(0,0),(-1,0), 2, colors.black),
              ('LINEBELOW',(0,-6),(-1,-6), 2, colors.black),
 #             ('ALIGN', (5,-1),(5,-1), 'RIGHT'),
-             ('FACE', (5,-5),(5,-1), 'Helvetica-Bold'),
+             ('FACE', (4,-5),(4,-1), 'Helvetica-Bold'),
              ('FACE', (0,0),(-1,0), 'Helvetica-Bold'),
              ('SIZE', (0,0),(-1,-1), 8)])
             
-        colWidths = [None, None, None, None,2*inch, None,None]
-        table = Table(tableData, colWidths=colWidths, style=tableStyle, hAlign=TA_LEFT)
-        table.hAlign = TA_LEFT
+        colWidths = [2*inch, 2*inch, None, None,None, None]
+        table = Table(tableData, colWidths=colWidths, style=tableStyle)
+        table.hAlign = "LEFT"
         Story.append(table)
         if invoice.comment != "":
             comment = Paragraph("<b>Comments:</b><br/>%s"%invoice.comment, style)

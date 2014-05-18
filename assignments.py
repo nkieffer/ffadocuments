@@ -16,7 +16,7 @@ import time
 from utilities import *
 import views
 from google.appengine.ext.webapp import template
-from dbmodels import Partner, Project, Site, Volunteer
+from dbmodels import Partner, Project, Site, Volunteer, Settings
 
 
 class Show(webapp2.RequestHandler):
@@ -34,13 +34,18 @@ class Show(webapp2.RequestHandler):
         now = datetime.datetime.now()
         year = now.year
         month = now.month
+        settings = Settings.get_all()
+        try:
+            num_months = Settings.get_all()[0].num_months
+        except:
+            num_months = 3
 
         #v.months = memcache.get("calendar")
         #if v.months is None:
         v.months = []
-
+        
         ct = 0
-        while ct < 3:
+        while ct < num_months:
             cacheKey = "calendar:%s:%s" % (year, month)
             tm = memcache.get(cacheKey)
             if tm is None:

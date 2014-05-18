@@ -243,7 +243,7 @@ class Assignment(db.Model):
     @property
     def end_date_str(self):
 #        return (self.end_date - datetime.timedelta(days=6)).strftime("%Y-%m-%d")#"%d-%d-%d" % (self.end_date.year, self.end_date.month, self.end_date.day - 1)
-        return (self.end_date).strftime("%Y-%m-%d")#"%d-%d-%d" % (self.end_date.year, self.end_date.month, self.end_date.day - 1)
+        return (self.start_date + datetime.timedelta(weeks=self.num_weeks-1)).strftime("%Y-%m-%d")#"%d-%d-%d" % (self.end_date.year, self.end_date.month, self.end_date.day - 1)
     @property
     def start_date_date(self):
         return self.start_date.date()
@@ -284,3 +284,15 @@ class Settings(db.Model):
     email = db.EmailProperty()
     sdin = db.StringProperty()
     sales_tax = db.FloatProperty(default=0.0)
+    num_months = db.IntegerProperty(default=6)
+    @classmethod
+    def get_all(cls):
+        cacheKey = "settings:all"
+        allInstances = memcache.get(cacheKey)
+        if allInstances is None:
+            logging.info("creating cache: "  + cacheKey)
+            allInstances = cls.all()
+            memcache.get(cacheKey, allInstances)
+        else:
+            logging.info("using cache: " + cacheKey)
+        return allInstances

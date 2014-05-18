@@ -48,6 +48,7 @@ class Month():
 
 
             if len(assignments) > 0:
+                assignments = sorted(assignments, key=lambda a: a.site.country)
                 assignments = sorted(assignments, key=lambda a: a.project.name)
                 new_week = Week(week)
                 new_week.setAssignments(assignments)

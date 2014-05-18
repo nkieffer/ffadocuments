@@ -49,5 +49,6 @@ class Edit(webapp2.RequestHandler):
         settings.email = request.get('email')
         settings.sdin = request.get('sdin')
         settings.sales_tax = float(request.get('sales_tax'))
+        settings.num_months = int(request.get('num_months'))
         settings.put()
         self.redirect('/settings?saved=1')

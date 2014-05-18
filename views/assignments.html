@@ -47,13 +47,13 @@
       <th colspan="9">{{ week.week }}</th>
     </tr>
     <tr class="assignment_heading">
-      <th>Project</th><th>Site</th><th>Capacity</th><th>Code</th><th>Volunteer</th><th>Start Date</th><th>End Date</th><th>Weeks Left</th><th>Partner</th>
+      <th>Project</th><th>Site</th><th>Country</th><th>Code</th><th>Volunteer</th><th>Start Date</th><th>End Date</th><th>Weeks Left</th><th>Partner</th>
     </tr>
     {% for a in week.assignments %}
     <tr class="assignment{% ifchanged a.project.name %} project_section{% endifchanged %}" data-akey="{{ a.key }}">
    {% ifchanged a.site.name %}
        <td>{% ifchanged a.project.name %}{{ a.project.name }}{% endifchanged %}</td><td>{{ a.site.name }}</td>
-      <td class="capacity_cell">{{ a.site.capacity }}</td>
+      <td class="capacity_cell">{{ a.site.country }}</td>
       {% else %}
       <td colspan="3"></td>
     {% endifchanged %}
