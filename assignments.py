@@ -34,12 +34,12 @@ class Show(webapp2.RequestHandler):
         now = datetime.datetime.now()
         year = now.year
         month = now.month
-        settings = Settings.get_all()
+       # settings = Settings.get_all()
         try:
             num_months = Settings.get_all()[0].num_months
         except:
             num_months = 3
-
+        logging.info("num_months = " + str(int(num_months)))
         #v.months = memcache.get("calendar")
         #if v.months is None:
         v.months = []

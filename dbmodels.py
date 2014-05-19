@@ -264,7 +264,7 @@ class Invoice(db.Model):
         if allInstances is None:
             logging.info("creating cache: "  + cacheKey)
             allInstances = cls.all()
-            memcache.get("invoice:all", allInstances)
+            memcache.add("invoice:all", allInstances)
         else:
             logging.info("using cache: " + cacheKey)
         return allInstances
@@ -289,10 +289,12 @@ class Settings(db.Model):
     def get_all(cls):
         cacheKey = "settings:all"
         allInstances = memcache.get(cacheKey)
+        logging.info("******")
+        logging.info(allInstances)
         if allInstances is None:
             logging.info("creating cache: "  + cacheKey)
             allInstances = cls.all()
-            memcache.get(cacheKey, allInstances)
+            memcache.add(cacheKey, allInstances)
         else:
             logging.info("using cache: " + cacheKey)
         return allInstances
