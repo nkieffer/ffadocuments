@@ -109,7 +109,7 @@ routes= [
     webapp2.Route('/settingsEdit', handler="settings.Edit")
     ]
                 
-app = webapp2.WSGIApplication( routes,
+app = webapp2.WSGIApplication( routes,  config = { "ADD_PARTNER" : False },
                                  debug=True)
 #    util.run_wsgi_app(app)
 

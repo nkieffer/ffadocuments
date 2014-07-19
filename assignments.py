@@ -31,12 +31,13 @@ class Show(webapp2.RequestHandler):
         v.params.partner = self.request.get("partner")
         v.params.project = self.request.get("project")
         v.params.site = self.request.get("site")
+        v.calendar = []
         now = datetime.datetime.now()
         year = now.year
         month = now.month
        # settings = Settings.get_all()
         try:
-            num_months = Settings.get_all()[0].num_months
+            num_months = Settings.get_all().num_months
         except:
             num_months = 3
         logging.info("num_months = " + str(int(num_months)))
@@ -46,33 +47,29 @@ class Show(webapp2.RequestHandler):
         
         ct = 0
         while ct < num_months:
-            cacheKey = "calendar:%s:%s" % (year, month)
-            tm = memcache.get(cacheKey)
-            if tm is None:
-                thisMonth = calgen.Month(year, month, self.request)
-                thisMonth.populate()
-                tm = TemplateValues()
-                tm.name = thisMonth.name
-                tm.year = thisMonth.year
-                tm.weeks = thisMonth.weeks
+            thisMonth = calgen.Month(year, month, self.request)
+            thisMonth.populate()
+            tm = TemplateValues()
+            tm.name = thisMonth.name
+            tm.year = thisMonth.year
+            tm.weeks = thisMonth.weeks
+            logging.info("TM:\n\t" + str(tm))
+            cacheKey = "calendar:%d:%d" % (year, month)
+            monthHTML = memcache.get(cacheKey)
+            if monthHTML is None:
+                path = os.path.join(os.path.dirname(__file__), "views", "calendar_cache.html")
+                monthHTML = template.render(path, {"tm" : tm })
                 logging.info("Creating cache: %s" % cacheKey)
-
-                memcache.add(cacheKey, tm)
+                memcache.add(cacheKey, monthHTML)
             else:
                 logging.info("Using cache: %s" % cacheKey)
-            v.months.append(tm)
-            try:
-                logging.info("+==========")
-                logging.info(tm.weeks[0].assignments)
-                logging.info("==========+")
-            except:
-                pass
+            v.months.append(monthHTML)
             month += 1
             if month ==13:
                 month = 1
                 year += 1
             ct += 1
-        v.partners = Partner.get_all()#db.GqlQuery("SELECT  name FROM Partner").fetch(1000)
+        v.partners = Partner.get_all(False)#db.GqlQuery("SELECT  name FROM Partner").fetch(1000)
         v.projects = Project.get_all()#db.GqlQuery("SELECT  name FROM Project").fetch(1000)
         v.countries = memcache.get("countries")
         if v.countries is None:

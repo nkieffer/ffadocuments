@@ -56,7 +56,7 @@ class Form(webapp2.RequestHandler):
             v.total_price = 0.0
             for a in v.assignments:
                 v.total_price += a.total_price
-        v.partners = dbmodels.Partner.get_all()
+        v.partners = dbmodels.Partner.get_all(False)
         
         path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.out.write(template.render(path, { "v" : v }))

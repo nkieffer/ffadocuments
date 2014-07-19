@@ -38,7 +38,7 @@ class PDF(webapp2.RequestHandler):
     def get(self):
         invoice = dbmodels.Invoice.get(self.request.get("ikey"))
         assignments = dbmodels.Assignment.get([str(key) for key in invoice.akeys])
-        assignments = sorted(assignments, key=lambda assignment: assignment.start_date)
+      #  assignments = sorted(assignments, key=lambda assignment: assignment.start_date)
         settings = dbmodels.Settings.get(db.Key.from_path("Settings", "main"))
         timestamp = datetime.datetime.now()
         self.response.headers.add_header("Content-type", "application/pdf")
@@ -75,10 +75,16 @@ class PDF(webapp2.RequestHandler):
                           "",#"",
                           "Item Total"])
         subTotal = 0
-        for a in assignments:
+        for i, a in enumerate(assignments):
             a = a.jsonAssignment
-            addWeeks = a["additionalWeeks"] * a["additionalWeekPrice"]                              
-            itemSub = a["price"] + addWeeks #- a["discount"]
+            prev = assignments[i-1].jsonAssignment
+            addWeeks = a["additionalWeeks"] * a["additionalWeekPrice"]
+            if i > 0 and a['volunteer'] == assignments[i-1].jsonAssignment['volunteer']:
+                itemSub = a['additionalWeekPrice'] * a['minimum_duration'] + addWeeks
+                a['volunteer'] = '"'
+            else:
+            
+                itemSub = a["price"] + addWeeks #- a["discount"]
             assignmentData = [a["volunteer"], 
                               a["project"],
                               a["start_date"], 

@@ -28,8 +28,24 @@ $('document').ready(function(){
 	    success: function(json){
 		$('#items').html("")
 		total = 0
-		for(j in json.assignments){
-		    r = json.assignments[j]
+		var end_date = new Date($('#end_date').attr('value'));
+		var assignments = new Array();
+		var names = new Array();
+		if ( $('#alldates').attr('checked') == 'checked'){
+		    assignments = json.assignments;
+		} else {
+		    for(j in json.assignments){
+			r = json.assignments[j]
+			d = new Date(r.end_date);
+			if (d < end_date || names.indexOf(r.volunteer) != -1 ){
+			    assignments.push(r);
+			    names.push(r.volunteer);
+			}
+		    }
+		}
+		
+		for (j in assignments){
+		    r = assignments[j];
 		    checked="";
 		    invoicedStyle="";
 		    if (r.invoiced == true){
@@ -40,9 +56,13 @@ $('document').ready(function(){
 		    if (json.on_invoice.indexOf(r.key) >= 0){
 			on_invoice="checked"
 		    }
+		    add = ""
+		    if (r.is_additional){
+			add = "*"
+		    };
 		    $('#items').html($("#items").html() + 
 				     "<tr><td>"+
-				     r.volunteer+"</td><td>"+
+				     add + r.volunteer+"</td><td>"+
 				     r.project+"</td><td>"+
 				     r.site+"</td><td>"+
 				     r.start_date+"</td><td>"+

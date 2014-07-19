@@ -4,6 +4,7 @@ from google.appengine.datastore import entity_pb
 from google.appengine.api import users
 from google.appengine.api import memcache
 import logging
+import webapp2
 
 def serialize_entities(models):
     if models is None:
@@ -56,10 +57,11 @@ class Partner(db.Model):
         return allVolunteers
     
     @classmethod
-    def get_all(cls):
+    def get_all(cls, added):
         cacheKey = "partner:all"
+        logging.info("Added = " + str(added))
         allPartners = memcache.get(cacheKey)
-        if allPartners is None:
+        if allPartners is None or added:
             logging.info("creating cache: "  + cacheKey)
             allPartners = cls.all()
             memcache.add(cacheKey, allPartners)
@@ -129,6 +131,7 @@ class Project(db.Model):
     abbr = db.StringProperty()
     price = db.FloatProperty()
     additionalWeekPrice = db.FloatProperty()
+    minimum_duration = db.IntegerProperty()
     sales_tax = db.FloatProperty(default=.075)
     comment = db.TextProperty()
 
@@ -210,6 +213,7 @@ class Assignment(db.Model):
         duration = self.duration.days / 7.0
         return { "volunteer" : "%s, %s" % (self.volunteer.lname, self.volunteer.fname),
                  "project" : self.project.name,
+                 "minimum_duration" : self.project.minimum_duration,
                  "site" : self.site.name,
                  "start_date" : self.start_date_str,
                  "end_date" : self.end_date_str,
@@ -242,8 +246,11 @@ class Assignment(db.Model):
         return self.start_date.strftime("%Y-%m-%d")# "%d-%d-%d" % (self.start_date.year, self.start_date.month, self.start_date.day)
     @property
     def end_date_str(self):
+        try:
 #        return (self.end_date - datetime.timedelta(days=6)).strftime("%Y-%m-%d")#"%d-%d-%d" % (self.end_date.year, self.end_date.month, self.end_date.day - 1)
-        return (self.start_date + datetime.timedelta(weeks=self.num_weeks-1)).strftime("%Y-%m-%d")#"%d-%d-%d" % (self.end_date.year, self.end_date.month, self.end_date.day - 1)
+            return (self.start_date + datetime.timedelta(weeks=self.num_weeks-1)).strftime("%Y-%m-%d")#"%d-%d-%d" % (self.end_date.year, self.end_date.month, self.end_date.day - 1)
+        except TypeError:
+            return ""
     @property
     def start_date_date(self):
         return self.start_date.date()
@@ -293,7 +300,7 @@ class Settings(db.Model):
         logging.info(allInstances)
         if allInstances is None:
             logging.info("creating cache: "  + cacheKey)
-            allInstances = cls.all()
+            allInstances = cls.all()[0]
             memcache.add(cacheKey, allInstances)
         else:
             logging.info("using cache: " + cacheKey)

@@ -52,6 +52,7 @@ class Edit(webapp2.RequestHandler):
         project.abbr = self.request.get('abbr')
         project.price = float(self.request.get('price'))
         project.additionalWeekPrice = float(self.request.get('additionalWeekPrice'))
+        project.minimum_duration = int(self.request.get('minimum_duration'))
         project.comment = self.request.get('comment')
         db.put(project)
         memcache.delete("project:all")

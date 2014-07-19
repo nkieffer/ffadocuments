@@ -81,16 +81,28 @@ class JSON(webapp2.RequestHandler):
         assignments.order("start_date").order("end_date")#.order("volunteer.lname")
         assignments.filter("partner =", p.key())
         if alldates != "checked":
+            logging.info(start_date)
             start_date = strtodt(start_date)
+            logging.info(start_date)
             end_date = strtodt(end_date) + relativedelta(day=1, months=1)
             logging.info((start_date,  end_date))
             assignments.filter("start_date >=", start_date)
-            assignments.filter("start_date <", end_date)
+         #   assignments.filter("start_date <", end_date)
         
 
         assignments = [a.jsonAssignment for a in assignments]
         assignments.sort(lambda a,b: cmp(a['volunteer'].lower(),b['volunteer'].lower()))
-        logging.info(len(assignments))
+        logging.info(assignments)
+        for i, assignment in enumerate(assignments):
+            if i > 0:
+                if assignment['volunteer'] == assignments[i-1]['volunteer']:
+                    assignments[i]['price'] = assignment['additionalWeekPrice'] * assignment['minimum_duration']
+                    assignments[i]['is_additional'] = True
+                else:
+                    assignments[i]['is_additional'] = False
+            logging.info(i)
+            logging.info(assignment)
+            logging.info("--------")
         jsonResponse = {"assignments":assignments, "on_invoice": on_invoice }
         self.response.out.write(json.dumps(jsonResponse))
         
