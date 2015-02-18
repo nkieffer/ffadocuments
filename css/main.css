@@ -128,3 +128,30 @@ width:66%;
 #invoicelist{
 clear:both;
 }
+
+label{
+    display:block;
+}
+#message {
+    margin-left:110px;
+    margin-right:1em;
+    margin-bottom:1em;
+    padding:1em;
+
+}
+.error {
+    background-color:#fee;
+    border:solid 1px #f88;
+}
+.success {
+    background-color:#efe;
+    border:solid 1px #8f8;
+
+}
+.info {
+    background-color:#eef;
+    border:solid 1px #88f;
+}
+.hidden {
+    display:none;
+}

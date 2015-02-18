@@ -15,6 +15,9 @@ handlers:
 - url: /css
   static_dir: css
 
+- url: /views
+  static_dir: views
+  
 - url: /.*
   script: main.app
   login: admin

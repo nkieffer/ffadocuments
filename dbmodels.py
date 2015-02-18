@@ -1,8 +1,9 @@
 import datetime
-from google.appengine.ext import db
+from google.appengine.ext import db, ndb
 from google.appengine.datastore import entity_pb
 from google.appengine.api import users
 from google.appengine.api import memcache
+import json
 import logging
 import webapp2
 
@@ -25,12 +26,11 @@ def deserialize_entities(data):
     else:
         return [db.model_from_protobuf(entity_pb.EntityProto(x)) for x in data]
 
-class Partner(db.Model):
-    name = db.StringProperty()
-    abbr = db.StringProperty()
-    comment = db.TextProperty()
-    address = db.TextProperty()
-    feed_uri = db.StringProperty()
+class Partner(ndb.Model):
+    name = ndb.StringProperty()
+    abbr = ndb.StringProperty()
+    comment = ndb.TextProperty()
+    address = ndb.TextProperty()
     
     @property
     def activeVolunteers(self):
@@ -67,13 +67,24 @@ class Partner(db.Model):
             memcache.add(cacheKey, allPartners)
         return allPartners
     
+    @property
+    def json(self):
+        result = {
+                'key': unicode(self.key()),
+                'name': self.name,
+                'abbr': self.abbr,
+                'comment': self.comment,
+                'address': self.address
+                }
+        return result
+        
 class Volunteer(db.Model):
     fname = db.StringProperty()
     lname = db.StringProperty()
     country = db.StringProperty()
     DOB = db.DateTimeProperty()
     email = db.EmailProperty()
-    partner = db.ReferenceProperty(reference_class=Partner, collection_name="volunteers")
+    partner = ndb.KeyProperty(kind=Partner)
     address = db.TextProperty()
     emergency = db.TextProperty()
     invoiced = db.BooleanProperty(default=False)
@@ -150,7 +161,7 @@ class Project(db.Model):
 class Site(db.Model):
     name = db.StringProperty()
     abbr = db.StringProperty()
-    project = db.ReferenceProperty(reference_class=Project, collection_name="sites")
+ #   project = db.ReferenceProperty(reference_class=Project, collection_name="sites")
     country = db.StringProperty()
     capacity = db.IntegerProperty()
     comment = db.TextProperty()
@@ -167,10 +178,10 @@ class Site(db.Model):
         return allInstances
 
 class Assignment(db.Model):
-    volunteer = db.ReferenceProperty(reference_class=Volunteer, collection_name="assignments")
-    partner = db.ReferenceProperty(reference_class=Partner, collection_name="assignments")
-    project = db.ReferenceProperty(reference_class=Project, collection_name='assignments')
-    site = db.ReferenceProperty(reference_class=Site)
+  #  volunteer = ndb.KeyProperty(kind='Volunteer')
+  #  partner = ndb.KeyProperty(kind='Partner')
+  #  project = db.ReferenceProperty(reference_class=Project, collection_name='assignments')
+  #  site = db.ReferenceProperty(reference_class=Site)
     start_date = db.DateTimeProperty()
     end_date = db.DateTimeProperty()
     num_weeks = db.IntegerProperty()
@@ -259,7 +270,7 @@ class Assignment(db.Model):
         return self.end_date.date()
 
 class Invoice(db.Model):
-    partner = db.ReferenceProperty(reference_class=Partner, collection_name="invoices")
+  #  partner = db.ReferenceProperty(reference_class=Partner, collection_name="invoices")
     date = db.DateTimeProperty()
     akeys = db.ListProperty(db.Key)
     comment = db.TextProperty()

@@ -1,5 +1,6 @@
 import datetime
 from google.appengine.api import users
+import logging
 
 class TemplateValues(object):
     def __init__(self):
@@ -23,3 +24,10 @@ def session():
 def strtodt(date_str):
     d = date_str.split("-")
     return datetime.datetime(*[int(x) for x in d])
+
+def log(fn, *args, **kwargs):
+    def decorated(*args, **kwargs):    
+        logging.info("Calling %s.%s"%(fn.__module__,fn.__name__))
+        fn(*args, **kwargs)
+    return decorated
+    

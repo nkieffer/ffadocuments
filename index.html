@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+  <head>
+    <title>FFA: {{ v.pageinfo.title }}</title>
+    <meta charset="utf-8"/>
+    <script type="text/javascript" src="/js/jquery-1.8.0.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-ui-1.8.23.custom.min.js"></script>
+    <script type="text/javascript" src="/js/underscore-min.js"></script>	
+    <script type="text/javascript" src="/js/backbone-min.js"></script>
+    <script type="text/javascript" src="/js/utilities.js"></script>
+    <script type="text/javascript" src="/js/actions.js"></script>	
+    <script type="text/javascript" src="/js/partners.js"></script>
+    <script type="text/javascript" src="/js/router.js"></script>
+	<script type="text/javascript">
+
+	</script>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.23.custom.css"/>   
+    <link rel="stylesheet" type="text/css" href="css/main.css"/>
+  </head>
+  <body>
+    <div id="content">
+      <div id="header">
+	<h1>FFA: <span id="page"></span></h1>
+      </div> 
+     <div id="sidebar">
+	<ul>
+	  <li><a href="{{ v.logout_url }}">Logout</a></li>
+	  <li>&nbsp;</li>
+	  <li><a href="/#assignments" accesskey="c">Calendar</a></li>
+	  <li><a href="/#partners" accesskey="r">Partners</a></li>
+	  <li><a href="/#projects" accesskey="j">Projects</a></li>
+	  <li><a href="/#volunteers" accesskey="v">Volunteers</a></li>
+	  <li><a href="/#invoices" accesskey="i">Invoices</a></li>
+	  <li><a href="/#dump">Dump</a></li>
+	  <li><a href="/#settings">Settings</a></li>
+	</ul>
+	<aside>If you find a bug or have a feature request, fill out the form you see <a href="https://code.google.com/p/ffadocuments/issues/entry?template=Defect%20report%20from%20user" target="_blank">here</a>.</aside>
+      </div>
+      <div id="message"></div>
+      <div id="main">
+      	
+      </div>
+      <div id="footer">
+
+      </div>
+    </div>
+    <div id="templates">
+	<script type="text/template" id="partnerTableRowTemp">
+	    <tr>
+			<td><%= name %></td><td><a href="/#partners/form/<%= id %>">Edit</a> | <a href="/#partners/delete/<%= id %>">Delete</a></td>
+	    </tr>
+	</script>
+	<script type="text/template" id="partnerFormTemp">
+	    <form id="partnerForm">
+			<input type="hidden" id="id" value="<%= id  %>"/>
+			<label for="name">Partner Org. Name</label>
+			<input id="name" type="text" value="<%= name %>"/>
+			<label for="abbr">Partner Org. Abbr.</label>
+			<input id="abbr" type="text" value="<%= abbr  %>"/>
+			<label for="address">Address</label>
+			<textarea id="address" name="address"><%= address %></textarea>
+			<label for="comment">Comment</label>
+			<textarea id="comment" name="comment"><%= comment %></textarea>
+			<br/>
+			<input type="Submit" value="Save"/>
+			<input type="reset" value="Reset"/>
+	    </form>
+	</script>
+
+	<script type="text/template" id="projectTableTemp">
+		<a href="/#projects/form">New Project</a>
+		<table id="projectTable">
+			<thead>
+				<tr>
+      				<th>Name</th><th>Abbr</th><th>Price</th><th>Actions</th>
+    			</tr>
+  			</thead>
+  			<tbody>
+  			</tbody>
+  			<tfoot>
+  			</tfoot>
+  		</table>
+  	</script>
+
+  	<script type="text/template" id="projectTableRowTemp">	
+    	<tr>
+      		<td><%= name %></td>
+      		<td><%= abbr %></td>
+      		<td><%= price %></td>
+      		<td><a href="/siteForm/<%= id %>">Add Site</a> | <a href="/projectForm/<%= id %>">Edit</a> | <a class="delete project" href="/projectDelete/<%= id %>">Delete</a></td>
+    	</tr>
+    </script>
+
+    <script type="text/template" id="projectFormTemp">
+		<form action="projectEdit" method="post">
+			<input type="hidden" name="key" value="<%= id %>">
+			<table>
+				
+				<tr>
+					<th><label for="name">Name</label></th><td><input type="text" class="first" name="name" id="name" value="<%= name %>"></td>
+				</tr>
+				<tr>
+					<th><label for="abbr">Abbr</label></th><td><input type="text" name="abbr" id="abbr" value="<%= abbr %>"></td>
+				</tr>
+				<tr>
+					<th><label for="price">Base Price</label></th><td><input type="text" name="price" id="price" value="<%= price %>"></td>
+				</tr>
+				<tr>
+					<th><label for="additionalWeekPrice">Additional Weeks Price</label></th><td><input type="text" name="additionalWeekPrice" id="additionalWeekPrice" value="<%= additionalWeekPrice %>"></td>
+				</tr>
+				<tr>
+					<th><label for="minimumDuration">Minimum Duration</label></th><td><input type="text" name="minimumDuration" id="minimumDuration" value="<%= minimumDuration %>"></td>
+				</tr>
+			</table>
+			<label for="comment">Comments</label><br/>
+			<textarea name="comment" id="comment"><%= comment %></textarea><br/>
+			<input type="submit" value="Save">
+		</form>
+    </script>
+
+    </div>
+  </body>
+</html>
