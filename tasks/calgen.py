@@ -10,6 +10,7 @@ def assignmentDict(model):
     
 class Run(webapp2.RequestHandler):
     def get(self):
+        manual = self.request.get("manual") == "1"
         num_months = 3
 
         now = datetime.datetime.now().date()
@@ -30,9 +31,10 @@ class Run(webapp2.RequestHandler):
         while this_week < end_date:
             this_weeks_assignments = [] 
             for a in assignments:
+                
                 if a.start_date.date() <= this_week and a.end_date.date() >= this_week:
-                    a.weeks_remaining = ((a.end_date.date() - this_week).days + 1)/7
-                    logging.info(a.weeks_remaining)
+#                    a.weeks_remaining = ((a.end_date.date() - this_week).days + 1)/7
+#                    logging.info(a.weeks_remaining)
                     this_weeks_assignments.append(a)
 
             weeks.append((this_week, this_weeks_assignments))
@@ -40,9 +42,13 @@ class Run(webapp2.RequestHandler):
         logging.info(weeks)
         calendar = Calendar.get_or_insert("main", title="Main Calendar Data")
         calendar.data = pickle.dumps(weeks)
+        calendar.timestamp = datetime.datetime.now()
+        calendar.manual = manual
         calendar.put()
 
         #delete all the NewAssignments that are now in the calendar
 
         db.delete(NewAssignment.all(keys_only=True))
+        if manual:
+            self.redirect("/settings?status=calgen")
         

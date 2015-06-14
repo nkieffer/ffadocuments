@@ -33,7 +33,10 @@ class Show(webapp2.RequestHandler):
 #        v.params.partner = self.request.get("partner")
 #        v.params.project = self.request.get("project")
 #        v.params.site = self.request.get("site")
-        v.calendar = sorted(pickle.loads(Calendar.get_by_key_name("main").data))
+        calendar = Calendar.get_by_key_name("main")
+        v.calendar = sorted(pickle.loads(calendar.data))
+        v.caption = "Calendar was generated {} at {}.".format({True: "manually", False: "automatically"}[calendar.manual], calendar.timestamp)
+        logging.info(v.caption)
         new_assignments = dbmodels.NewAssignment.all()
         for i, week in enumerate(v.calendar):
             for assignment in new_assignments:
@@ -41,9 +44,6 @@ class Show(webapp2.RequestHandler):
                     v.calendar[i][1].append(assignment.assignment)
             v.calendar[i][1].sort(key=lambda a: (a.project_name, a.start_date,a.end_date))
             
-        logging.info(v.calendar)
-        
-        
         # for week, assignments in sorted(v.calendar.items(), key=lambda i: i[0]):
         #     self.response.out.write("<h6>{}</h6>".format(week))
         #     self.response.out.write("<ul>")
@@ -101,7 +101,6 @@ class Show(webapp2.RequestHandler):
 
         path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())
-        logging.info(template.render("views/assignments.html", {"v":v}))
         self.response.out.write(template.render(path, { "v" : v }))
 
 class Form(webapp2.RequestHandler):

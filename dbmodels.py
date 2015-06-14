@@ -8,6 +8,8 @@ import webapp2
 
 class Calendar(db.Model):
     data = db.BlobProperty()
+    timestamp = db.DateTimeProperty()
+    manual = db.BooleanProperty()
 
 class Partner(db.Model):
     name = db.StringProperty()
@@ -155,9 +157,9 @@ class Assignment(db.Model):
 
     partner = db.ReferenceProperty(reference_class=Partner, collection_name="assignments")
     project = db.ReferenceProperty(reference_class=Project, collection_name='assignments')
-    project_name = db.StringProperty(default="unset")
-    partner_name = db.StringProperty(default="unset")
-    volunteer_name = db.StringProperty(default="unset")
+    project_name = db.StringProperty(default=None)
+    partner_name = db.StringProperty(default=None)
+    volunteer_name = db.StringProperty(default=None)
 
     site = db.ReferenceProperty(reference_class=Site)
     start_date = db.DateTimeProperty()

@@ -1,7 +1,6 @@
 <!--<script type="text/javascript" src="/js/assignments.js"></script>-->
 
 <script type="text/javascript">
-alert("asdf");
 function getWeeksRemaining(endDate,  currentDate) {
 var one_day = 1000*60*60*24;
 var endDate = endDate.getTime();
@@ -60,10 +59,11 @@ td, th {
  </style>
 <div id="calendar">
   <table>
+    <caption>{{ v.caption }}</caption>
     {% autoescape off %}
     {% for week, assignments in v.calendar %}
     <thead>
-      <tr><th colspan="7">{{ week }}</th></tr>
+    <tr><th colspan="6">{{ week }}</th><th>{{ assignments|length }} Volunteers</th></tr>
       <tr>
 	<th>project</th>
 	<th>code</th>

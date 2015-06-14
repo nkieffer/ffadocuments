@@ -3,6 +3,9 @@
 alert("Settings saved.");
 </script>
 {% endif %}
+Calendar was {% if v.calendar.manual %} manually {% else %} automatically {% endif %} generated at {{ v.calendar.timestamp }}.
+<br/>
+<a href="/tasks/calgen?manual=1">Regenerate Calendar</a>
 <form action="settingsEdit" method="post">
 <table>
     <tr>

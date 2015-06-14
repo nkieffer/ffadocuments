@@ -18,10 +18,12 @@ class Show(webapp2.RequestHandler):
 
         v.pageinfo.title = "Settings"
         v.saved = self.request.get('saved') == '1'
+        v.calendar = dbmodels.Calendar.get_by_key_name("main")
         v.settings = db.get(db.Key.from_path('Settings', 'main'))
         
         path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())
+        logging.info(template.render( "views/"+views.settings, {}))
         self.response.out.write(template.render(path, { "v" : v }))
 
 
