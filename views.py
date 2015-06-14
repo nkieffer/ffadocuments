@@ -1,7 +1,7 @@
 import os
 views = "views"
 main = os.path.join(views, "main.html")
-assignments = os.path.join("assignments.html")
+assignments = os.path.join(views,"assignments.html")
 assignmentForm = os.path.join("assignmentForm.html")
 
 partners = "partners.html"

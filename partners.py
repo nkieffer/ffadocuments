@@ -22,10 +22,8 @@ class Show(webapp2.RequestHandler):
         v.pageinfo.html = views.partners
         logging.info(views.partners)
         v.pageinfo.title = "Partners"
-        app = webapp2.get_app()
-        added = app.registry.get('ADD_PARTNER')
         v.partners = dbmodels.Partner.all()#get_all(added)
-        app.registry['ADD_PARTNER'] = False
+        v.partners.order("name")
         path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
@@ -58,10 +56,7 @@ class Edit(webapp2.RequestHandler):
         partner.abbr = self.request.get('abbr')
         partner.address = self.request.get('address')
         partner.comment = self.request.get('comment')
-
         partner.put()
-        webapp2.get_app().registry['ADD_PARTNER'] = True
-        memcache.delete("partner:all")
         self.redirect('/partners')
 
 

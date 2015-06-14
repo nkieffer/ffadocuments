@@ -12,6 +12,9 @@ import logging
 from google.appengine.ext.webapp import template
 from dateutil.relativedelta import relativedelta
 import logging
+import urllib
+from google.appengine.api import urlfetch
+from google.appengine.api import app_identity
 
 class Show(webapp2.RequestHandler):
     def get(self):
@@ -146,3 +149,22 @@ class Delete(webapp2.RequestHandler):
         self.redirect("/partnerForm?key="+str(pkey))
 
 
+class Generate(webapp2.RequestHandler):
+    def get(self):
+        docname = self.request.get('docname')
+        scope = "https://script.google.com/macros/s/AKfycbxAIMNcXOcTnlz3MS-AAeqJ_iGpPVDogFd9l80u8qEC/dev"
+        authorization_token, _ = app_identity.get_access_token(scope)
+        result = urlfetch.fetch(
+            url="https://script.google.com/macros/s/AKfycbwKLckJael18kaWSQFazXExzsSTSwrlRglbOAKWuuMQ4-nae_ra/exec",
+            payload=urllib.urlencode({"docname":docname}),
+            method=urlfetch.POST,
+            follow_redirects=False,
+            headers={'Content-Type': 'application/x-www-form-urlencoded'})
+        if result.status_code == 200:
+            logging.info(result.content)
+            self.response.out.write(result.content)
+        else:
+            self.response.out.write(result.status_code)
+        
+      
+      

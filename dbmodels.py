@@ -6,24 +6,8 @@ from google.appengine.api import memcache
 import logging
 import webapp2
 
-def serialize_entities(models):
-    if models is None:
-        return None
-    elif isinstance(models, db.Model):
-        # Just one instance
-        return db.model_to_protobuf(models).Encode()
-    else:
-        # A list
-        return [db.model_to_protobuf(x).Encode() for x in models]
-    
-def deserialize_entities(data):
-    if data is None:
-        return None
-    elif isinstance(data, str):
-        # Just one instance
-        return db.model_from_protobuf(entity_pb.EntityProto(data))
-    else:
-        return [db.model_from_protobuf(entity_pb.EntityProto(x)) for x in data]
+class Calendar(db.Model):
+    data = db.BlobProperty()
 
 class Partner(db.Model):
     name = db.StringProperty()
@@ -168,8 +152,13 @@ class Site(db.Model):
 
 class Assignment(db.Model):
     volunteer = db.ReferenceProperty(reference_class=Volunteer, collection_name="assignments")
+
     partner = db.ReferenceProperty(reference_class=Partner, collection_name="assignments")
     project = db.ReferenceProperty(reference_class=Project, collection_name='assignments')
+    project_name = db.StringProperty(default="unset")
+    partner_name = db.StringProperty(default="unset")
+    volunteer_name = db.StringProperty(default="unset")
+
     site = db.ReferenceProperty(reference_class=Site)
     start_date = db.DateTimeProperty()
     end_date = db.DateTimeProperty()
@@ -180,6 +169,7 @@ class Assignment(db.Model):
     discount = db.FloatProperty()
     invoiced = db.BooleanProperty(default=False)
     comment = db.TextProperty()
+    expired = db.BooleanProperty(default=False)
 
     @classmethod
     def get_all(cls):
@@ -257,6 +247,11 @@ class Assignment(db.Model):
     @property
     def end_date_date(self):
         return self.end_date.date()
+
+
+class NewAssignment(db.Model):
+    assignment = db.ReferenceProperty(reference_class=Assignment)
+
 
 class Invoice(db.Model):
     partner = db.ReferenceProperty(reference_class=Partner, collection_name="invoices")

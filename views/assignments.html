@@ -1,43 +1,114 @@
-<script type="text/javascript" src="/js/assignments.js"></script>
+<!--<script type="text/javascript" src="/js/assignments.js"></script>-->
 
+<script type="text/javascript">
+alert("asdf");
+function getWeeksRemaining(endDate,  currentDate) {
+var one_day = 1000*60*60*24;
+var endDate = endDate.getTime();
+var currentDate = currentDate.getTime();
+
+var diff = endDate - currentDate;
+
+return Math.round(diff/one_day/7);
+
+}
+
+$(document).ready(function(){
+$("tr.assignment").click(function(){
+	assignment = $(this).attr('data-assignment');
+	$('tr.assignment').each(function(){
+	    $(this).removeClass('highlight');
+	});
+	$("[data-assignment="+assignment+"]").each(function(){
+	    $(this).addClass('highlight');
+	});
+    });
+});
+</script>
 <div id="filter_controls">
-
-<input type="button" value="clear" onclick="window.location='assignments'"/>
-<label for="f_country">Country:</label>
-<select name="country" id="f_country" class="filter">
-<option value="-">-</option>
-{% for country in v.countries %}
-<option value="{{ country.country }}" {% ifequal country.country v.params.country %}selected="selected"{% endifequal %}>{{ country.country }}</option>
-{% endfor %}
-</select>
-<label for="f_partner">Partner:</label>
-<select name="partner" id="f_partner" class="filter">
-<option value="-">-</option>
-{% for partner in v.partners %}
-<option value="{{ partner.key }}" {% ifequal partner.key|cut:" " v.params.partner|cut:" " %}selected="selected"{% endifequal %}>{{ partner.name }}</option>
-{% endfor %}
-</select>
-<label for="f_project">Project:</label>
-<select name="project" id="f_project" class="filter">
-<option value="-">-</option>
-{% for project in v.projects %}
-<option value="{{ project.key }}" {% ifequal project.key|cut:" " v.params.project|cut:" " %}selected="selected"{% endifequal %} >{{ project.name }}</option>
-{% endfor %}
-</select>
-<label for="f_site">Site:</label>
-<select name="site" id="f_site" class="filter">
-<option value="-">-</option>
-{% for site in v.sites %}
-<option value="{{ site.key }}"  {% ifequal site.key|cut:" " v.params.site|cut:" " %}selected="selected"{% endifequal %}>{{ site.name }}</option>
-{% endfor %}
-</select>
 </div>
 <br/><br/>
+<style>
+thead:nth-of-type(odd), tbody:nth-of-type(odd) {
+  background-color:#ccc;
+}
+
+thead:nth-of-type(even), tbody:nth-of-type(even) {
+  background-color:#eee;
+}
+
+thead tr+tr {
+  border-bottom:solid 1px black;
+}
+
+thead tr:first-child th {
+  padding-left:.6em;
+  text-align:left;
+  font-size:1.5em;
+}
+
+tr.start_project {
+border-top:dotted 1px black;
+}
+td, th {
+  padding:0 1em;
+}
+    .highlight {
+	background-color:lightyellow;
+    }
+
+ </style>
 <div id="calendar">
   <table>
-{% autoescape off %}
-{% for month in v.months %}{{ month }}{% endfor %}
-{% endautoescape %}
+    {% autoescape off %}
+    {% for week, assignments in v.calendar %}
+    <thead>
+      <tr><th colspan="7">{{ week }}</th></tr>
+      <tr>
+	<th>project</th>
+	<th>code</th>
+	<th>volunteer</th>
+	<th>start</th>
+	<th>end</th>
+	<th>remaining</th>
+	<th>partner</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for assignment in assignments %}
+      <tr data-assignment="{{ assignment.key }}" data-project="{{ assignment.project_name }}" data-partner="{{ assignment.partner_name }}" class="assignment{% ifchanged assignment.project_name %} start_project{% endifchanged %}">
+	<td>{% ifchanged assignment.project_name %}{{ assignment.project_name }}{% else %}{% endifchanged %}</td>
+	<td>
+	  {% ifequal assignment.start_date.date week %}
+	  F{% else %}
+	  {% ifequal assignment.end_date.date week %}
+	  L
+	  {% endifequal %}
+	  {% endifequal %}
+	</td>
+	<td>{{ assignment.volunteer_name }}</td>
+	<td>{{ assignment.start_date.date }}</td>
+	<td>{{ assignment.end_date.date }}</td>
+	<td style="width:50px;text-align:center">
+	  <script>
+document.write(
+    getWeeksRemaining(
+	new Date({{ assignment.end_date.date.year }}, 
+		 {{ assignment.end_date.date.month }}, 
+		 {{ assignment.end_date.date.day }}), 
+	new Date({{ week.year }}, 
+		 {{ week.month }}, 
+		 {{ week.day }})
+    )
+)
+	  </script>
+	</td>
+	<td>{{ assignment.partner_name }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    {% endfor %}
+    {% endautoescape %}
   </table>
 </div>
 

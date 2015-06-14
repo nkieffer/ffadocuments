@@ -18,7 +18,7 @@ class Show(webapp2.RequestHandler):
         v.pageinfo = TemplateValues()
         v.pageinfo.html = views.projects
         v.pageinfo.title = "Projects"
-        v.projects = dbmodels.Project.get_all()
+        v.projects = dbmodels.Project.all()#_all()
         path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())
         self.response.out.write(template.render(path, { "v" : v }))
@@ -65,4 +65,5 @@ class Delete(webapp2.RequestHandler):
         sites = project.sites
         db.delete(sites)
         db.delete(project)
+        memcache.delete("project:all")
         self.redirect('/projects')

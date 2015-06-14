@@ -12,6 +12,29 @@ indexes:
 
 - kind: Assignment
   properties:
+  - name: end_date
+  - name: start_date
+
+- kind: Assignment
+  properties:
+  - name: exprired
+  - name: end_date
+  - name: start_date
+
+- kind: Assignment
+  properties:
+  - name: in_range
+  - name: end_date
+  - name: start_date
+
+- kind: Assignment
+  properties:
+  - name: invoiced
+  - name: end_date
+  - name: start_date
+
+- kind: Assignment
+  properties:
   - name: invoiced
   - name: partner
   - name: start_date

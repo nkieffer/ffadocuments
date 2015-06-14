@@ -1,0 +1,35 @@
+    <tbody class='monthrow'>
+    <tr>
+      <th colspan="9">{{ tm.name }} - {{ tm.year }}</th>
+    </tr>
+    </tbody>
+    {% for week in tm.weeks %}
+    <tbody class="{% cycle even,odd as rowc %}">
+    <tr class="weekDate">
+      <th colspan="9">{{ week.week }}</th>
+    </tr>
+    <tr class="assignment_heading">
+      <th>Project</th><th>Code</th><th>Volunteer</th><th>Start Date</th><th>End Date</th><th>Weeks Left</th><th>Partner</th>
+    </tr>
+    {% for a in week.assignments %}
+    <tr class="assignment{% ifchanged a.project.name %} project_section{% endifchanged %}" data-akey="{{ a.key }}">
+       <td>{% ifchanged a.project.name %}{{ a.project.name }}{% endifchanged %}</td>
+    
+{% if a.volunteer %}
+      <td class=" {% ifequal a.duration.days 6 %}singleweek{% else %}{% ifequal a.start_date_str week.strweek %}firstweek{% endifequal %}{% ifequal a.end_date_str week.strweek %}lastweek{% endifequal %}{% endifequal %}">{% ifequal a.duration.days 6 %}FL{% else %}{% ifequal a.start_date_str week.strweek %}F{% endifequal %}{% ifequal a.end_date_str week.strweek %}L{% endifequal %}{% endifequal %}</td>
+      <td><a href="/volunteerForm?key={{ a.volunteer.key }}">{{ a.volunteer.lname }}, {{ a.volunteer.fname }}</a></td>
+      <td class="date_cell">{{ a.start_date_str }}</td>
+      <td class="date_cell">{{ a.end_date_str }}</td>
+      <td >{{ a.weeks_remaining }}</td>
+      <td>{{ a.volunteer.partner.name }}</td>
+{% else %}
+      <td colspan="5"></td>
+{% endif %}
+    </tr>
+    
+
+     {% endfor %}
+    {% endfor %}
+    </tbody>
+
+

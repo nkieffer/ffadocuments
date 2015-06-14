@@ -83,6 +83,7 @@ routes= [
     webapp2.Route('/partnerForm', handler="partners.Form"),
     webapp2.Route('/partnerEdit', handler="partners.Edit"),
     webapp2.Route('/partnerDelete', handler="partners.Delete"),
+    webapp2.Route('/invoiceGen', handler="invoices.Generate"),
     webapp2.Route('/invoices', handler="invoices.Show"),
     webapp2.Route('/invoiceForm', handler="invoices.Form"),
     webapp2.Route('/invoiceView', handler="invoices.View"),
@@ -106,7 +107,8 @@ routes= [
     ('/api/(.+)', API),#"api.Api"),
     webapp2.Route('/pdf', handler="pdftest.PDF"),
     webapp2.Route('/settings', handler="settings.Show"),
-    webapp2.Route('/settingsEdit', handler="settings.Edit")
+    webapp2.Route('/settingsEdit', handler="settings.Edit"),
+    webapp2.Route('/tasks/calgen', handler="tasks.calgen.Run")
     ]
                 
 app = webapp2.WSGIApplication( routes,  config = { "ADD_PARTNER" : False },

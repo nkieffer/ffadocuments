@@ -19,10 +19,10 @@ class Month():
         self.weeks.append(week)
 
     def populate(self):
-        country = self.request.get("country")
-        partner = self.request.get("partner")
-        project = self.request.get("project")
-        site = self.request.get("site")
+      #  country = self.request.get("country")
+      #  partner = self.request.get("partner")
+      #  project = self.request.get("project")
+      #  site = self.request.get("site")
 
         oneweek = datetime.timedelta(days=7)
         weeks = [x[0] for x in  self.calendar.monthdatescalendar(self.year, self.month) if x[0].month == self.month]
@@ -34,21 +34,22 @@ class Month():
 
             assignments = [a for a in a_query]
             assignments = filter(lambda a: week >= a.start_date.date(), assignments)
-            if country:
-                assignments = filter(lambda a: a.site.country == country, assignments)
-            if partner:
-                assignments = filter(lambda a: unicode(a.partner.key()) == unicode(partner), assignments)
+            
+            # if country:
+            #     assignments = filter(lambda a: a.site.country == country, assignments)
+            # if partner:
+            #     assignments = filter(lambda a: unicode(a.partner.key()) == unicode(partner), assignments)
 
-            if project:
-                assignments = filter(lambda a: unicode(a.project.key()) == unicode(project), assignments)
+            # if project:
+            #     assignments = filter(lambda a: unicode(a.project.key()) == unicode(project), assignments)
 
-            if site:
-                assignments = filter(lambda a: unicode(a.site.key()) == unicode(site), assignments)
+            # if site:
+            #     assignments = filter(lambda a: unicode(a.site.key()) == unicode(site), assignments)
 
 
 
             if len(assignments) > 0:
-                assignments = sorted(assignments, key=lambda a: a.site.country)
+           #     assignments = sorted(assignments, key=lambda a: a.site.country)
                 assignments = sorted(assignments, key=lambda a: a.project.name)
                 new_week = Week(week)
                 new_week.setAssignments(assignments)
