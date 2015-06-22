@@ -1,69 +1,27 @@
-<!--<script type="text/javascript" src="/js/assignments.js"></script>-->
+<link rel="stylesheet" type="text/css" href="css/calendar.css"/>
+<script type="text/javascript" src="/js/calendar.js"></script>
 
-<script type="text/javascript">
-function getWeeksRemaining(endDate,  currentDate) {
-var one_day = 1000*60*60*24;
-var endDate = endDate.getTime();
-var currentDate = currentDate.getTime();
-
-var diff = endDate - currentDate;
-
-return Math.round(diff/one_day/7);
-
-}
-
-$(document).ready(function(){
-$("tr.assignment").click(function(){
-	assignment = $(this).attr('data-assignment');
-	$('tr.assignment').each(function(){
-	    $(this).removeClass('highlight');
-	});
-	$("[data-assignment="+assignment+"]").each(function(){
-	    $(this).addClass('highlight');
-	});
-    });
-});
-</script>
-<div id="filter_controls">
-</div>
-<br/><br/>
 <style>
-thead:nth-of-type(odd), tbody:nth-of-type(odd) {
-  background-color:#ccc;
-}
-
-thead:nth-of-type(even), tbody:nth-of-type(even) {
-  background-color:#eee;
-}
-
-thead tr+tr {
-  border-bottom:solid 1px black;
-}
-
-thead tr:first-child th {
-  padding-left:.6em;
-  text-align:left;
-  font-size:1.5em;
-}
-
-tr.start_project {
-border-top:dotted 1px black;
-}
-td, th {
-  padding:0 1em;
-}
-    .highlight {
-	background-color:lightyellow;
-    }
-
  </style>
 <div id="calendar">
+    <button id="clearFilters">Clear All Filters</button><button id="showAll">Show All Weeks</button><button id="hideAll">Hide All Weeks</button><button id="toggleAll">Toggle All Weeks</button>
   <table>
     <caption>{{ v.caption }}</caption>
     {% autoescape off %}
     {% for week, assignments in v.calendar %}
-    <thead>
-    <tr><th colspan="6">{{ week }}</th><th>{{ assignments|length }} Volunteers</th></tr>
+
+    <thead class="weekHead {% ifequal 0 assignments|length %}{% else %}hasAssignments{% endifequal %}" data-week="{{ week }}">
+      <tr>
+	<th colspan="4" style="min-width:400px">{{ week }}</th>
+	<th>Volunteers: <span class="volunteers">{{ assignments|length }}</span></th>
+	<th>Starts: <span class="starts"></span></th>
+	<th>Finishes: <span class="finishes"></span></th>
+      </tr>
+    </thead>
+{% ifequal assignments|length 0 %}
+
+    {% else %}
+    <thead class="assignmentHeadings">
       <tr>
 	<th>project</th>
 	<th>code</th>
@@ -74,39 +32,23 @@ td, th {
 	<th>partner</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody class="weekList" data-week="{{ week }}" data-starts="0" data-finishes="0">
       {% for assignment in assignments %}
-      <tr data-assignment="{{ assignment.key }}" data-project="{{ assignment.project_name }}" data-partner="{{ assignment.partner_name }}" class="assignment{% ifchanged assignment.project_name %} start_project{% endifchanged %}">
-	<td>{% ifchanged assignment.project_name %}{{ assignment.project_name }}{% else %}{% endifchanged %}</td>
-	<td>
-	  {% ifequal assignment.start_date.date week %}
-	  F{% else %}
-	  {% ifequal assignment.end_date.date week %}
-	  L
-	  {% endifequal %}
-	  {% endifequal %}
+      <tr data-assignment="{{ assignment.key }}" data-project="{{ assignment.project_name }}" data-partner="{{ assignment.partner_name }}" class="assignment{% ifchanged assignment.project_name %} start_project {% cycle  'projEven' 'projOdd' as project_set %} {% else %} {{ project_set }} {% endifchanged %}">
+	<td class="project_name" data-project="{{ assignment.project_name }}">{{ assignment.project_name }}</td>
+	<td class="code" data-startdate="{{ assignment.start_date.date }}" data-enddate="{{ assignment.end_date.date }}" data-week="{{ week }}">
+	  
 	</td>
-	<td>{{ assignment.volunteer_name }}</td>
+	<td class="volunteer_name" data-volunteer="{{ assignment.volunteer_name }}">{{ assignment.volunteer_name }}</td>
 	<td>{{ assignment.start_date.date }}</td>
 	<td>{{ assignment.end_date.date }}</td>
-	<td style="width:50px;text-align:center">
-	  <script>
-document.write(
-    getWeeksRemaining(
-	new Date({{ assignment.end_date.date.year }}, 
-		 {{ assignment.end_date.date.month }}, 
-		 {{ assignment.end_date.date.day }}), 
-	new Date({{ week.year }}, 
-		 {{ week.month }}, 
-		 {{ week.day }})
-    )
-)
-	  </script>
+	<td style="/*width:50px;text-align:center*/" class="weeksRemaining" data-endyear="{{ assignment.end_date.date.year }}" data-endmonth="{{ assignment.end_date.date.month }}" data-endday="{{ assignment.end_date.date.day }}" data-weekyear="{{ week.year }}" data-weekmonth="{{ week.month }}" data-weekday="{{ week.day }}">
 	</td>
-	<td>{{ assignment.partner_name }}</td>
+	<td class="partner_name" data-partner="{{ assignment.partner_name }}">{{ assignment.partner_name }}</td>
       </tr>
       {% endfor %}
     </tbody>
+    {% endifequal %}
     {% endfor %}
     {% endautoescape %}
   </table>

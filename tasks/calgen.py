@@ -32,7 +32,7 @@ class Run(webapp2.RequestHandler):
             this_weeks_assignments = [] 
             for a in assignments:
                 
-                if a.start_date.date() <= this_week and a.end_date.date() >= this_week:
+                if a.start_date.date() <= this_week <= a.end_date.date() - datetime.timedelta(days=6):
 #                    a.weeks_remaining = ((a.end_date.date() - this_week).days + 1)/7
 #                    logging.info(a.weeks_remaining)
                     this_weeks_assignments.append(a)

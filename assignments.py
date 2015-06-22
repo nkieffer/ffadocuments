@@ -1,6 +1,3 @@
-
-
-#from google.appengine.ext import webapp
 import webapp2
 from google.appengine.ext.webapp import util
 from google.appengine.ext import db
@@ -29,10 +26,6 @@ class Show(webapp2.RequestHandler):
         logging.info(v.pageinfo.html)
         v.pageinfo.title = "Calendar"
         v.params = TemplateValues()
-#        v.params.country = self.request.get("country")
-#        v.params.partner = self.request.get("partner")
-#        v.params.project = self.request.get("project")
-#        v.params.site = self.request.get("site")
         calendar = Calendar.get_by_key_name("main")
         v.calendar = sorted(pickle.loads(calendar.data))
         v.caption = "Calendar was generated {} at {}.".format({True: "manually", False: "automatically"}[calendar.manual], calendar.timestamp)
@@ -40,64 +33,10 @@ class Show(webapp2.RequestHandler):
         new_assignments = dbmodels.NewAssignment.all()
         for i, week in enumerate(v.calendar):
             for assignment in new_assignments:
-                if assignment.assignment.start_date.date() <= week[0] <=  assignment.assignment.end_date.date():
+                if assignment.assignment.start_date.date() <= week[0] <=  assignment.assignment.end_date.date() - datetime.timedelta(days=7):
                     v.calendar[i][1].append(assignment.assignment)
             v.calendar[i][1].sort(key=lambda a: (a.project_name, a.start_date,a.end_date))
             
-        # for week, assignments in sorted(v.calendar.items(), key=lambda i: i[0]):
-        #     self.response.out.write("<h6>{}</h6>".format(week))
-        #     self.response.out.write("<ul>")
-        #     for a in assignments:
-        #         self.response.out.write("<li>{} {} {}</li>".format(a.project.name, a.start_date.date(), a.end_date.date()))
-        #     self.response.out.write("</ul>")
-        # now = datetime.datetime.now()
-        # year = now.year
-        # month = now.month
-       # settings = Settings.get_all()
-       # try:
-       #     num_months = Settings.get_all().num_months
-       # except:
-        # num_months = 4
-        # logging.info("num_months = " + str(int(num_months)))
-        #v.months = memcache.get("calendar")
-        #if v.months is None:
-        # v.months = []
-        
-        # ct = 0
-        # while ct < num_months:
-        #     thisMonth = calgen.Month(year, month, self.request)
-        #     thisMonth.populate()
-        #     tm = TemplateValues()
-        #     tm.name = thisMonth.name
-        #     tm.year = thisMonth.year
-        #     tm.weeks = thisMonth.weeks
-        #     logging.info("TM:\n\t" + str(tm))
-        #     cacheKey = "calendar:%d:%d" % (year, month)
-        #     monthHTML = memcache.get(cacheKey)
-        #     if monthHTML is None:
-        #         path = os.path.join(os.path.dirname(__file__), "views", "calendar.html")
-        #         monthHTML = template.render(path, {"tm" : tm })
-        #         logging.info("Creating cache: %s" % cacheKey)
-        #         memcache.add(cacheKey, monthHTML)
-        #     else:
-        #         logging.info("Using cache: %s" % cacheKey)
-        #     v.months.append(monthHTML)
-        #     month += 1
-        #     if month ==13:
-        #         month = 1
-        #         year += 1
-        #     ct += 1
-        # v.partners = Partner.get_all(False)#db.GqlQuery("SELECT  name FROM Partner").fetch(1000)
-        # v.projects = Project.get_all()#db.GqlQuery("SELECT  name FROM Project").fetch(1000)
-        # v.countries = memcache.get("countries")
-        # if v.countries is None:
-        #     v.countries = db.GqlQuery("SELECT DISTINCT country FROM Site").fetch(1000)
-        #     memcache.add("countries", v.countries)
-
-        # v.sites = Site.get_all()#db.GqlQuery("SELECT name FROM Site").fetch(1000)
-
- #       t2 = time.time()
- #       logging.info("calgen: %f" % (t2 - t1))
 
         path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())
@@ -164,9 +103,11 @@ class Edit(webapp2.RequestHandler):
         assignment.comment = self.request.get('comment')
 #        assignment.discount = float(self.request.get('discount'))
         assignment.put()
-        new_assignment = dbmodels.NewAssignment()
-        new_assignment.assignment = assignment
-        new_assignment.put()
+        if akey == '':
+            new_assignment = dbmodels.NewAssignment()
+            new_assignment.assignment = assignment
+      #  new_assignment.assignment_id = assignment.key()
+            new_assignment.put()
         months = (assignment.end_date - assignment.start_date).days/30
         year = assignment.start_date.year
         month = assignment.start_date.month
@@ -191,6 +132,8 @@ class Delete(webapp2.RequestHandler):
         akey = self.request.get('akey')
         vkey = self.request.get('vkey')
         assignment = dbmodels.Assignment.get(akey)
+        new_assignment = db.GqlQuery("SELECT __key__ FROM NewAssignment WHERE assignment = :1", assignment.key())
+        db.delete(new_assignment)
         db.delete(assignment)
         self.response.out.write(akey+"<br>")
         self.response.out.write(vkey+"<br>")

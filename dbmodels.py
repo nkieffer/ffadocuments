@@ -253,7 +253,7 @@ class Assignment(db.Model):
 
 class NewAssignment(db.Model):
     assignment = db.ReferenceProperty(reference_class=Assignment)
-
+    assignment_id = db.StringProperty() #used to match for deleting
 
 class Invoice(db.Model):
     partner = db.ReferenceProperty(reference_class=Partner, collection_name="invoices")
