@@ -11,16 +11,17 @@ def assignmentDict(model):
 class Run(webapp2.RequestHandler):
     def get(self):
         manual = self.request.get("manual") == "1"
-        num_months = 3
+        num_months = 6
 
         now = datetime.datetime.now().date()
         this_week = now - datetime.timedelta(days=now.weekday())
         dmonth = this_week.month + num_months
         if dmonth > 11:
-            dmonth = 0
+            dmonth = 1
             dyear = this_week.year + 1
         else:
             dyear = this_week.year
+        logging.info("{} {}".format(dyear,dmonth))
         end_date = datetime.date(year=dyear, month=dmonth, day=1)
         logging.info(end_date)
         assignments = Assignment.gql("WHERE end_date > :1 ORDER BY end_date", now )

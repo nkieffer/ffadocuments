@@ -39,30 +39,28 @@ $(document).ready(function(){
     });
  //Hide and Show weekly assignments.   
     $('.weekHead').click(function(){
-//	$($(this).children()[1]).toggleClass('hidden');
-	var tbody = $(this).next().next();
-	var thead = $(this).next();
-	thead.toggleClass('hidden');
+	var tbody = $(this).next();
 	tbody.toggleClass('hidden');
+	$('tr.assignmentHeadings', this).toggleClass('hidden');
     });
 
     $('button#showAll').click(function(){
 	$('.weekList').each(function(){
-	    $(this).prev().removeClass('hidden');
+	    $(this).prev().find('.assignmentHeadings').removeClass('hidden');
 	    $(this).removeClass('hidden');
 	});
     });
 
     $('button#hideAll').click(function(){
 	$('.weekList').each(function(){
-	    $(this).prev().addClass('hidden');
+	    $(this).prev().find('.assignmentHeadings').addClass('hidden');
 	    $(this).addClass('hidden');
 	});
     });
 
     $("button#toggleAll").click(function(){
 	$('.weekList').each(function(){
-	    $(this).prev().toggleClass('hidden');
+	    $(this).prev().find('.assignmentHeadings').toggleClass('hidden');
 	    $(this).toggleClass('hidden');
 	});
     });
@@ -88,7 +86,7 @@ $(document).ready(function(){
 
     //Create volunteer count summary for each week
     $("tbody.weekList").each(function(){
-	var thead = $(this).prev().prev()
+	var thead = $(this).prev()
 	var starts = $(this).data('starts');
 	var finishes = $(this).data('finishes');
 	$("span.starts", thead).html(starts);
@@ -99,10 +97,8 @@ $(document).ready(function(){
     $("tbody.weekList").each(function(){
 	var counts = {}
 	$("tr.assignment", $(this)).each(function(){
-	    var project_name = $($(this).find('.project_name')[0]).data('project');
+	    var project_name = $(this).data('project');
 	    var code = $(this).find('.code')[0].innerHTML;
-	    console.log(project_name);
-	    console.log(code);
 	    if(counts.hasOwnProperty(project_name)){
 		counts[project_name].total += 1
 		
@@ -116,9 +112,14 @@ $(document).ready(function(){
 		counts[project_name].finish += 1;
 	    }
 	});
-	
-	for(var project in counts){
-	    $(this).prev().prev().append($("<tr class='projectSummary'><th colspan='4'>"+project+"</th><td>"+counts[project].total+"</td><td>"+counts[project].start+"</td><td>"+counts[project].finish+"</td></tr>"));
+	var countKeys = Object.keys(counts).sort();
+	if(countKeys.length == 0){
+	    $($(this).prev().children()[1]).addClass('hidden');
+	}else{
+	    for(var i in countKeys){
+		var project = countKeys[i];
+		$("<tr class='projectSummary'><th colspan='4'>"+project+"</th><td>"+counts[project].total+"</td><td>"+counts[project].start+"</td><td>"+counts[project].finish+"</td></tr>").insertAfter($(".weekSummary", $(this).prev()));
+	    }
 	}
     });
 
@@ -142,8 +143,7 @@ $(document).ready(function(){
     //filter by partner
     $(".partner_name").click(function(){
 	var partner_name = $(this).attr('data-partner');
-	$("td.partner_name[data-partner!="+partner_name+"]").each(function(){
-	    console.log($(this).data('filtered'));
+	$("td.partner_name[data-partner!='"+partner_name+"']").each(function(){
 	    if ($(this).data('filtered') == 'true'){
 		$(this).parent().removeClass('hidden');
 		$(this).data('filtered', 'false');
@@ -157,8 +157,7 @@ $(document).ready(function(){
     //filter by project
     $(".project_name").click(function(){
 	var project_name = $(this).attr('data-project');
-	$("td.project_name[data-project!="+project_name+"]").each(function(){
-	    console.log($(this).data('filtered'));
+	$("td.project_name[data-project!='"+project_name+"']").each(function(){
 	    if ($(this).data('filtered') == 'true'){
 		$(this).parent().removeClass('hidden');
 		$(this).data('filtered', 'false');
@@ -173,7 +172,6 @@ $(document).ready(function(){
     $(".volunteer_name").click(function(){
 	var volunteer_name = $(this).attr('data-volunteer');
 	$("td.volunteer_name[data-volunteer!='"+volunteer_name+"']").each(function(){
-	    console.log($(this).data('filtered'));
 	    if ($(this).data('filtered') == 'true'){
 		$(this).parent().removeClass('hidden');
 		$(this).data('filtered', 'false');
@@ -192,5 +190,9 @@ $(document).ready(function(){
 	$('td').each(function(){
 	    $(this).data('filtered', 'false');
 	});
+    });
+
+    $(".info").click(function(){
+	$(this).remove();
     });
 });
