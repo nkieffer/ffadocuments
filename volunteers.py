@@ -11,6 +11,40 @@ from utilities import *
 import views
 from google.appengine.ext.webapp import template
 import logging
+import pickle
+import json
+
+
+class CreateCache(webapp2.RequestHandler):
+    def get(self):
+        query = dbmodels.Volunteer.all()
+        query.order('lname').order('fname')
+        volunteers = query.fetch(1000)
+        for v in volunteers:
+            v.partner_name = v.partner.name
+            v.all_assignments = [ a.project_name for a in v.assignments ]
+        cache = dbmodels.Cache.get_or_insert('volunteers', title="Volunteer Cache")
+        cache.data = pickle.dumps(volunteers)
+        cache.timestamp = datetime.datetime.now()
+        cache.manual = False
+        cache.put()
+
+class RetrieveCache(webapp2.RequestHandler):
+    def get(self):
+        cache = dbmodels.Cache.get_by_key_name('volunteers')
+        data = [
+            [ v.lname, v.fname, v.country, v.email, v.partner_name, str(v.key()) ] for
+            v in pickle.loads(cache.data) ]
+        self.response.out.write(json.dumps(data))
+
+class ShowNew(webapp2.RequestHandler):
+    def get(self):
+        v = TemplateValues()
+        v.pageinfo = TemplateValues()
+        v.pageinfo.html = "volunteersNew.html"#views.volunteers
+        v.pageinfo.title = "Volunteers"
+        path = os.path.join(os.path.dirname(__file__), views.main)
+        self.response.out.write( template.render(path, { "v" : v }))
 
 class Show(webapp2.RequestHandler):
     def get(self):
@@ -35,7 +69,7 @@ class Show(webapp2.RequestHandler):
                 v.volunteers = dbmodels.Volunteer.get_active()
         path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.out.write( template.render(path, { "v" : v }))
-
+        
 class Form(webapp2.RequestHandler):
     def get(self):
         v = TemplateValues()

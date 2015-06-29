@@ -64,7 +64,7 @@ $('document').ready(function(){
 				     "<tr><td>"+
 				     add + r.volunteer+"</td><td>"+
 				     r.project+"</td><td>"+
-				     r.site+"</td><td>"+
+				  //   r.site+"</td><td>"+
 				     r.start_date+"</td><td>"+
 				     r.end_date+"</td><td>"+
 				     r.duration +"</td><td>"+

@@ -11,6 +11,11 @@ class Calendar(db.Model):
     timestamp = db.DateTimeProperty()
     manual = db.BooleanProperty()
 
+class Cache(db.Model):
+    data = db.BlobProperty()
+    timestamp = db.DateTimeProperty()
+    manual = db.BooleanProperty()
+
 class Partner(db.Model):
     name = db.StringProperty()
     abbr = db.StringProperty()
@@ -65,6 +70,7 @@ class Volunteer(db.Model):
     invoiced = db.BooleanProperty(default=False)
     comment = db.TextProperty() # not in calender
     status = db.TextProperty() # This is on calender and includes info about paperwork
+
     @classmethod
     def get_all(cls):
         cacheKey = "volunteer:all"
@@ -112,6 +118,11 @@ class Volunteer(db.Model):
     @property
     def active_assignments(self):
          return self.assignments.filter("end_date >=", datetime.datetime.now()).count()
+    
+    @property
+    def json(self):
+        pass
+        
 class Project(db.Model):
     name = db.StringProperty()
     abbr = db.StringProperty()
@@ -206,7 +217,7 @@ class Assignment(db.Model):
         return { "volunteer" : "%s, %s" % (self.volunteer.lname, self.volunteer.fname),
                  "project" : self.project.name,
                  "minimum_duration" : self.project.minimum_duration,
-                 "site" : self.site.name,
+      #           "site" : self.site.name,
                  "start_date" : self.start_date_str,
                  "end_date" : self.end_date_str,
                  "num_weeks" : (self.end_date - self.start_date).days / 7.0,

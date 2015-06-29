@@ -157,5 +157,10 @@ indexes:
 
 - kind: Volunteer
   properties:
+  - name: lname
+  - name: fname
+
+- kind: Volunteer
+  properties:
   - name: partner
   - name: lname
