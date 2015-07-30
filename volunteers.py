@@ -20,6 +20,7 @@ class CreateCache(webapp2.RequestHandler):
         query = dbmodels.Volunteer.all()
         query.order('lname').order('fname')
         volunteers = query.fetch(1000)
+        db.delete(NewVolunteer.all(keys_only=True))
         for v in volunteers:
             v.partner_name = v.partner.name
             v.all_assignments = [ a.project_name for a in v.assignments ]
@@ -33,8 +34,10 @@ class RetrieveCache(webapp2.RequestHandler):
     def get(self):
         cache = dbmodels.Cache.get_by_key_name('volunteers')
         data = [
-            [ v.lname, v.fname, v.country, v.email, v.partner_name, str(v.key()) ] for
+            [ v.lname, v.fname, v.country, v.email, v.partner.name, str(v.key()) ] for
             v in pickle.loads(cache.data) ]
+        new_volunteers = [v.volunteer for v in dbmodels.NewVolunteer.all()]
+        [ data.append([v.lname, v.fname, v.country, v.email, v.partner.name, str(v.key())]) for v in new_volunteers]
         self.response.out.write(json.dumps(data))
 
 class ShowNew(webapp2.RequestHandler):
@@ -100,6 +103,7 @@ class Edit(webapp2.RequestHandler):
         key = self.request.get('key')
         if key == '':
             volunteer = dbmodels.Volunteer()
+            new_volunteer = True
         else:
             volunteer = dbmodels.Volunteer.get(key)
         volunteer.fname = self.request.get('fname')
@@ -112,6 +116,10 @@ class Edit(webapp2.RequestHandler):
         volunteer.emergency = self.request.get('emergency')
         volunteer.comment = self.request.get('comment')
         volunteer.put()
+        if new_volunteer:
+            nv = dbmodels.NewVolunteer()
+            nv.volunteer = volunteer
+            nv.put()
         memcache.delete("volunteer:all")
         memcache.delete("volunteer:all:%s" % volunteer.partner.key())
         memcache.delete("partner:volunteer:active:%s" % volunteer.partner.key())

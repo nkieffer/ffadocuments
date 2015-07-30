@@ -57,7 +57,7 @@ class Partner(db.Model):
             allPartners = cls.all()
             memcache.add(cacheKey, allPartners)
         return allPartners
-    
+
 class Volunteer(db.Model):
     fname = db.StringProperty()
     lname = db.StringProperty()
@@ -122,7 +122,11 @@ class Volunteer(db.Model):
     @property
     def json(self):
         pass
-        
+
+class NewVolunteer(db.Model):
+    volunteer = db.ReferenceProperty(reference_class=Volunteer)
+
+       
 class Project(db.Model):
     name = db.StringProperty()
     abbr = db.StringProperty()
