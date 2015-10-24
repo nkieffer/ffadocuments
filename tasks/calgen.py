@@ -17,7 +17,6 @@ class Run(webapp2.RequestHandler):
         this_week = now - datetime.timedelta(days=now.weekday())
         dmonth = this_week.month + num_months
         if dmonth > 11:
-            dmonth = 1
             dyear = this_week.year + 1
         else:
             dyear = this_week.year
