@@ -18,6 +18,7 @@ class Run(webapp2.RequestHandler):
         dmonth = this_week.month + num_months
         if dmonth > 11:
             dyear = this_week.year + 1
+            dmonth = dmonth - 11
         else:
             dyear = this_week.year
         logging.info("{} {}".format(dyear,dmonth))
