@@ -48,15 +48,16 @@ class Form(webapp2.RequestHandler):
         v.pageinfo = TemplateValues()
         v.pageinfo.html = views.assignmentForm
         v.pageinfo.title = "Assignment Form"
-        v.weeks = range(2,52)
+        v.weeks = range(1,52)
+# Form is no longer accessed from calendar
         origin = self.request.get('origin')
         if origin == "calendar":
             v.project = Project.get(self.request.get('project'))
-            v.calsites = Site.all()
-            v.calsites.filter("project =", v.project.key())
-            v.site = Site.get(self.request.get('site'))
+        #    v.calsites = Site.all()
+        #    v.calsites.filter("project =", v.project.key())
+        #    v.site = Site.get(self.request.get('site'))
             v.start_date = self.request.get('start_date')
-            v.sites = dbmodels.Site.all()
+        #    v.sites = dbmodels.Site.all()
             v.projects = dbmodels.Project.all()
             v.volunteers = Volunteer.all()
             
@@ -69,7 +70,7 @@ class Form(webapp2.RequestHandler):
                 v.assignment = dbmodels.Assignment.get(akey)
             v.vkey = vkey
             v.volunteer = dbmodels.Volunteer.get(vkey)
-            v.sites = dbmodels.Site.all()
+         #   v.sites = dbmodels.Site.all()
             v.projects = dbmodels.Project.all()
         path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())

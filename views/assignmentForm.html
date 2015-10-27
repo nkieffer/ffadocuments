@@ -46,11 +46,13 @@ volunteerData = {{% spaceless %}{% for vol in v.volunteers %}
           </select>
         </td>
       </tr>
+<!--
+{% comment "Site no longer necessary" %}
+
       <tr>
         <th><label for="site">Site</label></th>
         <td>
           <select name="site" id="site">
-
 	    {% for site in v.calsites %}
             <option value="{{ site.key }}" {% ifequal site.key  v.site.key %} selected="selected"{% endifequal %} class="{{ site.project.key }}">{{ site.name }}</option>
 	    {% endfor %}
@@ -61,6 +63,8 @@ volunteerData = {{% spaceless %}{% for vol in v.volunteers %}
           Capacity: <span id="capacity">{% for site in v.calsites %}{% ifequal site.key v.site.key %}{{ v.site.capacity }}{% endifequal %}{% endfor %}</span>                     
         </td>
       </tr>
+{% endcomment %}
+-->
       <tr>
         <th><label for="start_date">Start</label></th>
         <td>
