@@ -106,6 +106,7 @@ class Edit(webapp2.RequestHandler):
             new_volunteer = True
         else:
             volunteer = dbmodels.Volunteer.get(key)
+            new_volunteer = False
         volunteer.fname = self.request.get('fname')
         volunteer.lname = self.request.get('lname')
         volunteer.country = self.request.get('country')
