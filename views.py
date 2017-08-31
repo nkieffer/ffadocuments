@@ -21,3 +21,4 @@ invoices = "invoices.html"
 invoiceForm = "invoiceForm.html"
 
 settings = "settings.html"
+reports = "reports.html"

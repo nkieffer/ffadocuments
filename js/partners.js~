@@ -1,0 +1,34 @@
+$(document).ready(function(){
+    document.PartnerModel = Backbone.Model.extend({
+	defaults: {
+/*	    name = db.StringProperty()
+	    abbr = db.StringProperty()
+	    comment = db.TextProperty()
+	    address = db.TextProperty()
+*/
+	    key: "",
+	    name: "",
+	    abbr: "",
+	    comment: "",
+	    address: ""
+	},
+	idAttribute: "key"
+    });
+    
+    document.PartnerCollection = Backbone.Collection.extend({
+	url: "/partners",
+	model: document.PartnerModel
+    });
+
+    document.partnerCollection = new document.PartnerCollection();
+
+    document.PartnerListView = Backbone.View.extend({
+	el: '#partnerTable',
+	tpl: _.template($('#partnerTableRowTemplate').html()),
+	render: function(){
+	    this.$el.append(this.tpl(this.model));
+	    return this;
+	}
+    });
+
+});

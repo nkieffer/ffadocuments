@@ -1,0 +1,52 @@
+import webapp2
+import logging
+import datetime
+from dbmodels import Assignment
+
+class Run(webapp2.RequestHandler):
+    def get(self):
+        years = int(self.request.get("years"))
+        assignments = Assignment.all()
+        cutoff = datetime.datetime.now() - datetime.timedelta(days=365*years)
+        assignments.filter("end_date <=", cutoff)
+        out = "".join([str(a) for a in assignments])
+        #[[DOB], occ, [coo]]
+        stats = [[None, None, None] for _ in range(12)]
+        volunteers = []
+        week = datetime.timedelta(weeks=1)
+        stat_ents = {}
+        for a in assignments:
+            s = a.start_date
+            e = a.end_date
+            v = a.volunteer
+            coo = v.country
+            proj = a.project_name
+            while s < e:
+                month = s.month-1
+                year = v.DOB.year
+                logging.info(stats[month][0] == None)
+                if stats[month][0] == None:
+                    stats[month][0] = {year: 1}
+                elif stats[month][0].has_key(year):
+                    stats[month][0][year] = stats[month][0][year] + 1
+                else:
+                    stats[month][0][year] = 1
+                
+                if stats[month][1] == None:
+                    stats[month][1] = {coo: 1}
+                elif stats[month][1].has_key(coo):
+                    stats[month][1][coo] = stats[month][1][coo] + 1
+                else:
+                    stats[month][1][coo] = 1
+                
+                if stats[month][2] == None:
+                    stats[month][2] = {proj: 1}
+                elif stats[month][2].has_key(proj):
+                    stats[month][2][proj] = stats[month][2][proj] + 1
+                else:
+                    stats[month][2][proj] = 1
+            
+                s += week
+                
+            
+        self.response.out.write(stats)

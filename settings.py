@@ -23,7 +23,6 @@ class Show(webapp2.RequestHandler):
         
         path = os.path.join(os.path.dirname(__file__), views.main)
         self.response.headers.add_header("Expires", expdate())
-        logging.info(template.render( "views/"+views.settings, {}))
         self.response.out.write(template.render(path, { "v" : v }))
 
 
@@ -32,8 +31,6 @@ class Edit(webapp2.RequestHandler):
         request = self.request
         
         settings = dbmodels.Settings.get(db.Key.from_path("Settings", "main"))
-        logging.info(settings)
-        logging.info(type(request.get('companyName')))
         if not settings:
             settings = dbmodels.Settings(key_name="main")
 
@@ -47,7 +44,6 @@ class Edit(webapp2.RequestHandler):
         settings.bankAcctNum = request.get('bankAcctNum')
         settings.routingNumber = request.get('routing_number')
         settings.swiftCode = request.get('swift_code')
-        logging.info(settings.bankAcctNum)
         settings.email = request.get('email')
         settings.sdin = request.get('sdin')
         settings.sales_tax = float(request.get('sales_tax'))

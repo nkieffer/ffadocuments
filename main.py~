@@ -21,7 +21,7 @@ from google.appengine.ext import webapp
 import webapp2
 import dbmodels
 #import volunteers, partners, projects, sites, assignments, api, pdftest, settings, invoices
-#import reportlab
+import reportlab
 import os, sys
 from google.appengine.ext.webapp import template, util
 from utilities import *
@@ -78,65 +78,64 @@ def name():
         return name
 class GenData(webapp2.RequestHandler):
     def get(self):
-        generateData()
-def generateData():
-    partners = []
-    npartners = 10
-    while npartners >0:
-        paname = "PARTNER " +name()
-        p = dbmodels.Partner(name=paname, abbr=paname[:2], comment=paname+" "+paname, address="here\nthere\neverywhere")
-        p.put()
-        partners.append(p)
-        npartners -= 1
-    projects = []
-    nprojects = 10
-    while nprojects > 0:
-        prname = "PROJECT "+ name()
-        price = 1000+(1000*random.random())
-        pr = dbmodels.Project(name=prname, abbr=prname[:2], price=price, additionalWeekPrice=price*.1, minimum_duration=2, comment="No Comment")
-        pr.put()
-        projects.append(pr)
-        nprojects -= 1
-    volunteers = []
-    nvolunteers = 300
-    while nvolunteers > 0:
-        vol = dbmodels.Volunteer()
-        vol.fname = "VOLF"+name()
-        vol.lname = "VOLL"+name()
-        vol.country = random.choice(("US", "CA", "FR", "DE", "NE", "EN"))
-        vol.DOB = datetime.datetime(random.randint(1970, 1985), random.randint(1,12), random.randint(1,27))
-        vol.email = vol.fname+vol.lname+"@"+name()+".com"
-        vol.partner = random.choice(partners)
-        vol.address = "Here\nThere\nEverywhere"
-        vol.emergency = "!!!"
-        vol.comment = "---"
-        vol.status = "OK"
-        vol.put()
-        volunteers.append(vol)
-        nvolunteers -= 1
-        
-    for v in volunteers:
+
+        partners = []
         while True:
-            a = dbmodels.Assignment()
-            a.volunteer = v
-            a.project = random.choice(projects)
-            a.project_name = a.project.name
-            a.volunteer_name = a.volunteer.name
-            a.partner = v.partner
-            a.partner_name = v.partner.name
-            now = datetime.datetime.now()
-            delta = datetime.timedelta(days=now.weekday())
-            basedate = now-delta
-            basedate = basedate + datetime.timedelta(weeks=random.randint(-52*5, 52))
-            a.start_date = basedate + datetime.timedelta(weeks=random.randint(0, 10))
-            a.end_date = a.start_date + datetime.timedelta(weeks=random.randint(2,20))
-            a.num_weeks = (a.end_date - a.start_date).days / 7
-            a.put()
-            n = dbmodels.NewAssignment()
-            n.assignment = a
-            n.put()
-            if random.random() > 0.10:
+            paname = name()
+            p = dbmodels.Partner(name=paname, abbr=paname[:2], comment=paname+" "+paname, address="here\nthere\neverywhere")
+            p.put()
+            partners.append(p)
+            if random.random() <.05:
                 break
+        logging.info(partners)
+        projects = []
+        while True:
+            prname = name()
+            price = 1000+(1000*random.random())
+            pr = dbmodels.Project(name=prname, abbr=prname[:2], price=price, additionalWeekPrice=price*.1, minimum_duration=2, comment="No Comment")
+            pr.put()
+            projects.append(pr)
+            if  random.random() < .05:
+                break
+        volunteers = []
+        while True:
+            vol = dbmodels.Volunteer()
+            vol.fname = name()
+            vol.lname = name()
+            vol.country = random.choice(("US", "CA", "FR", "DE", "NE", "EN"))
+            vol.DOB = datetime.datetime(random.randint(1970, 1985), random.randint(1,12), random.randint(1,27))
+            vol.email = vol.fname+vol.lname+"@"+name()+".com"
+            vol.partner = random.choice(partners)
+            vol.address = "Here\nThere\nEverywhere"
+            vol.emergency = "!!!"
+            vol.comment = "---"
+            vol.status = "OK"
+            vol.put()
+            volunteers.append(vol)
+            if random.random() < .02:
+                break
+        
+        for v in volunteers:
+            while True:
+                a = dbmodels.Assignment()
+                a.volunteer = v
+                a.project = random.choice(projects)
+                a.project_name = a.project.name
+                a.volunteer_name = a.volunteer.name
+                a.partner = v.partner
+                a.partner_name = v.partner.name
+                now = datetime.datetime.now()
+                delta = datetime.timedelta(days=now.weekday())
+                basedate = now-delta
+                a.start_date = basedate + datetime.timedelta(weeks=random.randint(0, 10))
+                a.end_date = a.start_date + datetime.timedelta(weeks=random.randint(2,20))
+                a.num_weeks = (a.end_date - a.start_date).days / 7
+                a.put()
+                n = dbmodels.NewAssignment()
+                n.assignment = a
+                n.put()
+                if random.random > 0.05:
+                    break
                                                        
 routes= [
     ('/', MainHandler),
@@ -179,9 +178,7 @@ routes= [
     webapp2.Route('/settings', handler="settings.Show"),
     webapp2.Route('/settingsEdit', handler="settings.Edit"),
     webapp2.Route('/tasks/calgen', handler="tasks.calgen.Run"),
-    webapp2.Route('/gendata', handler=GenData),
-    webapp2.Route('/data', handler="archive.Run"),
-    webapp2.Route('/reports', handler="archive.Report")
+    webapp2.Route('/gendata', handler=GenData)
     ]
                 
 app = webapp2.WSGIApplication( routes,  config = { "ADD_PARTNER" : False },

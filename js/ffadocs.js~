@@ -1,0 +1,12 @@
+$(document).ready(function(){
+    var Router = Backbone.Router.extend({
+	routes: {
+	    "partners": "partnerList",
+	},
+	partnerList: function(){
+	    console.log("Request for /#partners");
+	}
+    });
+    Backbone.history.start()
+    var router = new Router();
+});

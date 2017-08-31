@@ -1,0 +1,15 @@
+$(function(){
+    console.log("Initializing model...");
+    var model = Backbone.Model.extend({
+	
+    });
+
+    var models = Backbone.Collection.extend({
+	model: model,
+	url: 'Model',
+
+    });
+
+    document.models = new models();
+    console.log("...model initialized");
+});

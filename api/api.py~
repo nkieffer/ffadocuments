@@ -1,0 +1,24 @@
+import webapp2
+import logging
+from dbmodels import *
+from google.appengine.ext import ndb
+from google.net.proto.ProtocolBuffer import ProtocolBufferDecodeError
+from utilities import log
+import json
+class FetchJSON(webapp2.RequestHandler):
+    @log
+    def get(self, cls=None, key=None):
+        cls = globals()[cls]
+        if key:
+            try:
+                key = ndb.Key(urlsafe=key)
+                entity = key.get().make_serializeable()
+            except ProtocolBufferDecodeError:
+                entity = None
+            self.response.out.write(json.dumps(entity))
+        else:      
+            cache = cls.get_cache()
+            if cache == None:
+                cache = cls.update_cache()
+            self.response.out.write(cache.data)
+    def pos

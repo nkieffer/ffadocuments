@@ -1,0 +1,5 @@
+cron:
+- description: daily generate calendar view 
+  url: /tasks/calgen
+  schedule: everyday 03:00
+  timezone: Asia/Bangkok

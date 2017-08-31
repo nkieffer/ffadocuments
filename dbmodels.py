@@ -1,5 +1,6 @@
 import datetime
 from google.appengine.ext import db
+from google.appengine.ext import ndb
 from google.appengine.datastore import entity_pb
 from google.appengine.api import users
 from google.appengine.api import memcache
@@ -118,6 +119,10 @@ class Volunteer(db.Model):
     @property
     def active_assignments(self):
          return self.assignments.filter("end_date >=", datetime.datetime.now()).count()
+
+    @property
+    def num_assignments(self):
+        return self.assignments.count()
     
     @property
     def json(self):
@@ -187,7 +192,9 @@ class Assignment(db.Model):
     invoiced = db.BooleanProperty(default=False)
     comment = db.TextProperty()
     expired = db.BooleanProperty(default=False)
-
+    
+    def __str__(self):
+        return "{} {} {} {} {} {}<br>".format(self.project_name, self.volunteer_name, self.partner_name, self.partner_name, str(self.start_date), str(self.end_date))
     @classmethod
     def get_all(cls):
         cacheKey = "assignment:all"
@@ -317,3 +324,9 @@ class Settings(db.Model):
         else:
             logging.info("using cache: " + cacheKey)
         return allInstances
+
+class Archive(ndb.Model):
+    timestamp = ndb.DateTimeProperty(auto_now_add=True)
+    year = ndb.IntegerProperty()
+    data = ndb.JsonProperty()
+    

@@ -1,0 +1,25 @@
+$(function(){
+    var router = Backbone.Router.extend({
+	routes: {
+	    "partners/edit(/:key)": "partnerForm",
+	    "partners/delete/:key": "deletePartner"
+	},
+	partnerForm: function(key) {
+	    console.log(document.FormView === undefined);
+	    document.FormView = document.FormView || Backbone.View.extend({
+		template: _.template($("#partner-form-tpl").html()),
+		el: "main",
+		render: function(){
+		    this.$el.html(this.template(this.model.attributes));
+		    return this;
+		}
+	    });
+	    var partner = document.partners.findWhere({ "key": key });
+	    var formView = new document.FormView({ model: partner });
+	    formView.render();
+	},
+
+	
+    });    
+
+});

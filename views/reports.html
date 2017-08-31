@@ -1,0 +1,27 @@
+<script type="text/javascript">
+$(document).ready(function(){
+alert("hello");
+$(".year-link").click(function(){
+    alert("hello")
+    $.ajax({
+	url :'/reports?year='+$(this).data("year"),
+	type: 'get',
+	dataType: "html",
+	success: function(json){
+	    $("#data-out").html(json);
+	    document.returnedData = JSON.parse(json);
+	}
+    });
+});
+});
+</script>
+<h1>This part is a work in progress</h2>
+<p>In the meantime please enjoy viewing blobs of raw data by clicking on the years below.</p>
+<ul>
+{% for year in v.years %}
+<li><a data-year="{{year.id }}" class="year-link">{{ year.id }}</a></li>
+{% endfor %}
+</ul>
+<div id="data-out">
+
+</div>

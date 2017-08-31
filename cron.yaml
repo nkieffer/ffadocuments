@@ -3,3 +3,7 @@ cron:
   url: /tasks/calgen
   schedule: every sunday 03:00
   timezone: Asia/Bangkok
+- description: archiver
+  url: /data?years=2017&confirm=hellyes
+  schedule: 1 of jan 0:00 
+  timezone: Asia/Bangkok

@@ -1,0 +1,17 @@
+$(function(){
+    var router = Backbone.Router.extend({
+	routes: {
+	    "calendar": "calendar",
+	    "partners": "partners",
+	},
+	calendar: function() {
+	    $('main').html("Displaying a calendar");
+	}
+	partners: function() {
+	    $('main').html("Displaying partners");
+	}
+    });
+    new router();
+    Backbone.history.start({pushState: true});
+});
+

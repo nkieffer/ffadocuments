@@ -1,0 +1,67 @@
+$(function(){
+    console.log("Initializing router...");
+    var router = Backbone.Router.extend({
+	routes: {
+	    "calendar": "calendar",
+	    "partners": "partners",
+	    "partners/edit(/:key)": "partnerForm",
+	    "projects": "projects",
+	    "volunteers": "volunteers",
+	    "invoices": "invoices",
+	    "settings": "settings"
+	},
+	calendar: function() {
+	    $('main').html("Displaying a calendar");
+	},
+	partners: function() {
+	    $('main').html($('#partner-table-tpl').html());
+	    $('#partner-table-foot').html("Loading...");
+	    console.dir(document.partners);
+	    if ( document.partners.length == 0 ){
+		document.partners.fetch({
+		    success: function(collection, response, options){
+			_.each(response, document.renderPartnerTableRow);
+			$('#partner-table-foot').html("");
+		    },
+		    error: function(collection, response, options){
+			$('main').html("Error");
+		    }
+		});
+	    } else {
+		document.partners.each(document.renderPartnerTableRow);
+		$('#partner-table-foot').html("");
+	    }
+	},
+	partnerForm: function(key) {
+	    console.log(document.FormView === undefined);
+	    document.FormView = document.FormView || Backbone.View.extend({
+		template: _.template($("#partner-form-tpl").html()),
+		el: "main",
+		render: function(){
+		    this.$el.html(this.template(this.model.attributes));
+		    return this;
+		}
+	    });
+	    var partner = document.partners.findWhere({ "key": key });
+	    var formView = new document.FormView({ model: partner });
+	    formView.render();
+	},
+	projects: function() {
+	    $("main").html("Displaying projects");
+	},
+	volunteers: function() {
+	    $('main').html("Displaying volunteers");
+	},
+	invoices: function() {
+	    $('main').html("Displaying a invoices");
+	},
+	settings: function() {
+	    $('main').html("Displaying settings");
+	}
+    });
+    document.router = new router();
+    Backbone.history.start();//{pushState: true});
+    console.log("...router initialized");
+});
+
+

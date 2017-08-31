@@ -1,0 +1,15 @@
+$(document).ready(function(){
+    	$.ajax({
+	    url :'/volunteersRetrieveCache',
+	    type: 'GET',
+	    data: { "start_date" : start,
+		    "end_date" : end,
+		    "project" : project,
+		    "site" : site} ,
+	    dataType: "json",
+	    success: function(json){
+		console.log(json.join(" : "));
+	    }
+	    
+	});
+});

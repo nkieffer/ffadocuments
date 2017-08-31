@@ -1,0 +1,13 @@
+import webapp2
+from dbmodels import *
+from utilities import *
+class Main(webapp2.RequestHandler):
+    """Handler for main UI view"""
+    def get(self):
+        v = TemplateValues()
+        v.entities = globals()
+        path = os.path.join(os.path.dirname(__file__), "ui.html")
+        self.response.headers.add_header("Expires", expdate())
+        self.response.out.write(template.render(path, { "v" : v }))
+
+    

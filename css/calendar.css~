@@ -1,0 +1,83 @@
+table {
+    min-width:600px;
+}
+/*thead:nth-of-type(odd), tbody:nth-of-type(odd) {
+    background-color:#ccc;
+}
+
+thead:nth-of-type(even), tbody:nth-of-type(even) {
+    background-color:#eee;
+}*/
+thead{
+    background-color:#aac;
+}
+thead.weekHead tr:first-child th:first-child{
+    -webkit-border-top-left-radius:5px;
+}
+thead.weekHead tr:first-child th:last-child{
+    -webkit-border-top-right-radius:5px;
+}
+
+tbody {
+    background-color:#fff;
+    margin-bottom:10px;
+}
+
+thead tr:first-child {
+    border-bottom:solid 1px black;
+}
+
+thead.weekHead tr:first-child th {
+    padding-left:.6em;
+    text-align:left;
+    font-size:1.5em;
+}
+
+thead {
+    margin-top:15px;
+}
+
+thead tr:first-child th {
+    padding:.5em;
+}
+thead tr{
+    box-shadow: 0px -1px 5px #000;
+}
+
+.projEven {
+    background-color:#eee;
+}
+
+.projOdd {
+    background-color:#ccc;
+}
+
+tr.start_project {
+    border-top:dotted 1px black;
+}
+td, th {
+    padding:0 1em;
+    text-align:left;
+}
+.highlight {
+    background-color:yellow;
+}
+.hidden {
+    display:none;
+}
+
+td.project_name, td.partner_name, td.volunteer_name {
+    cursor:pointer;
+}
+
+.hasAssignments tr:first-child th:first-child:before {
+    content:"* ";
+}
+
+.hasAssignments {
+    cursor:pointer;
+}
+
+tr.projectSummary:hover {
+    background-color:lightblue;
+}

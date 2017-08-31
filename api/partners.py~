@@ -1,0 +1,5 @@
+import webapp2
+import logging
+from dbmodels import Partner
+class Fetch(webapp2.RequestHandler):
+    logging.info(__file__, __name__)

@@ -1,0 +1,46 @@
+        """
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+var rawdata = {};
+var countrydata = {{}};
+var countries = [];
+for(var k in rawdata){{
+    if (rawdata.hasOwnProperty(k)){{
+	for(var m in rawdata[k]){{
+	    for (var c in rawdata[k][m]){{
+		if(rawdata[k][m].hasOwnProperty(c)){{
+                    if(countries.indexOf(c) < 0){{
+                         countries.push(c);
+                    }}
+  
+		    if(countrydata.hasOwnProperty(c)){{
+			countrydata[c] += 1;
+		    }}else{{
+			countrydata[c] = 1;
+		    }}
+		}}
+            }}
+	}}
+    }}
+}}
+countries.sort()
+var fdata = [["Country", "Volunteers"]]
+for (var c in countries){{
+    fdata.push([countries[c], countrydata[countries[c]]])
+}}
+
+console.dir(rawdata);
+console.dir(countrydata);
+console.dir(fdata)
+      google.charts.load('current', {{'packages':['corechart']}});
+      google.charts.setOnLoadCallback(drawChart);
+function drawChart(){{
+    var data = google.visualization.arrayToDataTable(fdata);
+    var options = {{ title: 'By Country' }}
+
+    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+    chart.draw(data, options);
+}} 
+</script>
+<div id="piechart" style="width: 900px; height:500px;"></div>
+<a href='/tasks/calgen?manual=1'>regen</a>""".format(starts))
